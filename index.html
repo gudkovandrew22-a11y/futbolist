@@ -431,6 +431,27 @@ label.sl2{display:block;font-size:11.5px;font-weight:800;color:var(--mu);text-tr
 .mgp span{color:var(--mu);font-size:12px;min-width:30px}
 .mgp i{font-style:normal;white-space:nowrap}
 .mgp em{font-style:normal;font-weight:800;min-width:30px;text-align:right}
+/* пирамида лиг режима игрока */
+.go.one{grid-template-columns:1fr}
+.ladder{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:nowrap;padding:8px 10px}
+.ladder i{font-style:normal;font-size:12px;font-weight:700;padding:5px 9px;white-space:nowrap;border-radius:999px;background:var(--card2);border:1px solid var(--line);color:var(--mu)}
+.ladder i.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.ladder i.ok{color:var(--fg);opacity:.75}
+.ladder b{color:var(--mu);font-weight:400}
+/* флаги и списки стран */
+.flg{display:inline-block;width:1.5em;height:1em;vertical-align:-.16em;margin-right:.4em;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 2px rgba(0,0,0,.2);flex:none}
+.hero .nm .flg{width:1.05em;height:.7em;vertical-align:.02em;margin-right:.35em}
+.fs{position:relative}
+.fs-b{width:100%;justify-content:space-between;flex-wrap:nowrap;text-align:left;font-weight:600;background:var(--card2);color:var(--fg);border:1px solid var(--line);padding:9px 12px}
+.fs-b .fs-t{flex:1;min-width:0;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fs-b i{flex:none;width:8px;height:8px;margin:0 4px 3px 8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);opacity:.75;transition:transform .15s}
+.fs-b[aria-expanded="true"] i{transform:rotate(225deg);margin-bottom:-3px}
+.fs-b[aria-expanded="true"]{border-color:var(--gold)}
+.fs-l{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:40;max-height:min(55vh,380px);overflow-y:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:4px}
+.fs-o{width:100%;justify-content:flex-start;flex-wrap:nowrap;text-align:left;font-weight:600;background:transparent;color:var(--fg);border:0;border-radius:10px;min-height:44px;padding:8px 10px}
+.fs-o:hover{background:var(--card2);filter:none}
+.fs-o.on{background:color-mix(in srgb,var(--acc) 22%,transparent);color:var(--fg)}
+.fs-g{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);padding:8px 10px 4px}
 </style></head><body>
 <div id="app"></div><div id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -722,20 +743,44 @@ const K6=['s','sh','p','d','df','ph'];
 const AN={out:{s:'Скорость',sh:'Удар',p:'Пас',d:'Дриблинг',df:'Защита',ph:'Физика'},gk:{s:'Реакция',sh:'Выходы',p:'Игра ногами',d:'Прыжок',df:'Позиция',ph:'Сила'}};
 const AI={s:'⚡',sh:'🎯',p:'🅰️',d:'🌀',df:'🛡',ph:'💪'};
 const POSW={ВРТ:[.30,.15,.10,.10,.30,.05],ЦЗ:[.08,.02,.12,.03,.50,.25],ЛЗ:[.20,.04,.18,.10,.33,.15],ПЗ:[.20,.04,.18,.10,.33,.15],ОП:[.06,.06,.30,.10,.30,.18],ЦП:[.08,.12,.35,.20,.15,.10],АП:[.10,.20,.30,.28,.05,.07],ЛВ:[.28,.18,.16,.28,.03,.07],ПВ:[.28,.18,.16,.28,.03,.07],НАП:[.15,.40,.10,.20,.03,.12]};
-const TN=['Лига 3','Вторая лига','Первая лига','Топ-лига','Элита'];
+const KN=['3-я лига','2-я лига','Высшая лига','Сильный клуб','Топ-клуб','Элита'];
 const MD=[.85,1,1.25],FG=[[1,1],[1.35,.65],[.65,1.45]];
-const TT={bomb:'🎯 Бомбардир',tech:'🎨 Техника',iron:'🛡 Железный',lead:'🎖 Лидер',grow:'🚀 Талант'};
 const AG=[{n:'Без менеджера',q:0,c:0,f:0,neg:0,pr:0,lg:-1,b:''},{n:'Дядя Коля',q:1,c:.1,f:.05,neg:1,pr:0,lg:4,b:'🇷🇺 знает российский рынок'},{n:'Мария Кравец',q:1,c:.2,f:.06,neg:1,pr:2,lg:-1,b:'🌟 раскрутка молодых'},{n:'Карлос Рейес',q:2,c:1,f:.1,neg:2,pr:1,lg:1,b:'🇪🇸 связи в Испании'},{n:'Ханс Бауэр',q:2,c:1.2,f:.1,neg:3,pr:1,lg:2,b:'🇩🇪 жёсткие переговоры'},{n:'Марко Пальмиери',q:3,c:5,f:.15,neg:3,pr:3,lg:-1,b:'👑 суперагент'}];
 /* ===== clubs ===== */
 const CL=[],LC=CD.map(()=>[]);
 CD.forEach((s,l)=>s.split(',').forEach(x=>{const c={n:x.slice(0,-1),t:+x.slice(-1),l,i:CL.length};CL.push(c);LC[l].push(c.i)}));
 const L2=CD.map(()=>[]);
 CD2.forEach((s,l)=>s.split(',').forEach(x=>{if(!x)return;const c={n:x.slice(0,-1),t:+x.slice(-1),l,i:CL.length,d:1};CL.push(c);L2[l].push(c.i)}));
+/* пирамида: в каждой стране три дивизиона по N клубов (N = размер высшей лиги). 2-й и 3-й собираются из клубов CD2 и списка MGX, как в режиме тренера */
+const L3=CD.map(()=>[]);
+(function(){
+ CD.forEach((_,l)=>{
+  const N=LC[l].length,a=L2[l].slice().sort((x,y)=>CL[y].t-CL[x].t||x-y),k=Math.ceil(a.length/2),x=(typeof MGX!='undefined'&&MGX[l])||[[],[]];
+  const d2=a.slice(0,k),d3=a.slice(k),top=new Set(LC[l]);
+  d3.forEach(i=>{CL[i].s=.7});
+  const add=(n,s,arr)=>{if(arr.length>=N)return;let c=CL.find(q=>q.l==l&&q.n==n);
+   if(c){if(top.has(c.i)||d2.indexOf(c.i)>=0||d3.indexOf(c.i)>=0)return}
+   else{c={n,t:1,l,i:CL.length,d:1,p:1,s};CL.push(c)}
+   arr.push(c.i)};
+  x[0].forEach(n=>add(n,1,d2));x[1].forEach(n=>add(n,.7,d3));
+  L2[l]=d2.slice(0,N);L3[l]=d3.slice(0,N)});
+})();
 const topL=l=>S&&S.mem?S.mem[l]:LC[l];
-const relK=l=>l==12||!L2[l].length?0:(LC[l].length>=16?3:2);
-function initMem(){S.mem=LC.map(a=>a.slice());S.mem2=L2.map(a=>a.slice());S.div=S.mem2[CL[S.ci].l].indexOf(S.ci)>=0?1:0}
+const relK=l=>LC[l].length>=16?3:2;
+function initMem(){S.mem=LC.map(a=>a.slice());S.mem2=L2.map(a=>a.slice());S.mem3=L3.map(a=>a.slice());setDiv()}
+const setDiv=()=>{const l=CL[S.ci].l;S.div=S.mem[l].indexOf(S.ci)>=0?0:S.mem2[l].indexOf(S.ci)>=0?1:2};
+/* старые сохранения: было два дивизиона, достраиваем третий и выравниваем размеры */
+function fixMem(){
+ if(!S.mem){initMem();return}
+ if(!S.mem3||S.mem2.some((a,l)=>a.length!=L2[l].length)){
+  S.mem3=[];
+  for(let l=0;l<LC.length;l++){
+   const N=LC[l].length,all=new Set(LC[l].concat(L2[l],L3[l])),T=S.mem[l].filter(i=>all.has(i)),have=new Set(T),old=new Set(S.mem2[l]||[]);
+   const rest=[...all].filter(i=>!have.has(i)).sort((x,y)=>(old.has(y)?1:0)-(old.has(x)?1:0)||CL[y].t-CL[x].t||x-y);
+   S.mem[l]=T;S.mem2[l]=rest.slice(0,N);S.mem3[l]=rest.slice(N,2*N)}}
+ setDiv()}
 const eraAdj=(n,Y)=>{const e=ERA[n];if(!e)return 0;let v=0;for(let i=0;i<e.length;i++){if(Y>=e[i][0])v=e[i][1];else break}return v};
-const pw=(c,Y)=>50+c.t*7+eraAdj(c.n,Y);
+const pw=(c,Y)=>50+(c.s!=null?c.s:c.t)*7+eraAdj(c.n,Y);
 const infl=Y=>Y<=2026?.3+.7*(Math.max(Y,1990)-1990)/36:1+(Y-2026)*.03;
 const club=()=>CL[S.ci];
 const Yr=()=>S.y0+S.season-1;
@@ -757,7 +802,12 @@ function genAttrs(pos,target){const w=POSW[pos],A={};K6.forEach((k,i)=>A[k]=cl(M
  for(let it=0;it<8;it++){const d=target-ovrOf(A,pos);if(!d)break;K6.forEach(k=>A[k]=cl(A[k]+d,20,96))}return A}
 const recalc=()=>{S.ovr=ovrOf(S.A,S.pos)};
 function val(){const a=S.age,f=a<21?1.5:a<24?1.25:a<=28?1:a<=31?.7:.4;return Math.max(.1,+(Math.pow(Math.max(S.ovr-45,1)/10,2.6)*2.2*f*infl(Yr())).toFixed(1))}
-const wgf=t=>Math.max(.03,+(val()*.35*[.5,.75,1,1.4,2][t-1]).toFixed(2));
+const wgf=k=>Math.max(.03,+(val()*.35*[.4,.55,.8,1.1,1.5,2][cl(k,1,6)-1]).toFixed(2));
+/* дивизион клуба сейчас: 0 высший, 1 второй, 2 третий, -1 вне пирамиды */
+const dvOf=j=>{const l=CL[j].l;return S.mem[l].indexOf(j)>=0?0:S.mem2[l].indexOf(j)>=0?1:S.mem3[l].indexOf(j)>=0?2:-1};
+/* ступень клуба на лестнице карьеры: 1 — 3-я лига … 6 — элита */
+const kOf=j=>{const d=dvOf(j);return d==2?1:d==1?2:[3,3,4,5,6][CL[j].t-1]||3};
+const tlab=j=>KN[kOf(j)-1];
 function setRole(){const d=S.ovr-pw(club(),Yr())-(S.flop?6:0);S.role=d>=4?'Ключевой':d>=-3?'Основа':d>=-9?'Ротация':'Запас'}
 const newSS=()=>({apps:0,g:0,a:0,sv:0,cs:0,rt:0,m:0,yc:0,rc:0});
 const attrCap=()=>Math.min(97,S.pot+6);
@@ -765,15 +815,14 @@ const trainCost=v=>v<60?1:v<72?2:v<82?3:4;
 function train(k){if(!S||S.dec)return;const c=trainCost(S.A[k]);if(S.tp<c||S.A[k]>=attrCap()){return render()}S.tp-=c;S.A[k]++;recalc();setRole();save();render()}
 /* ===== career creation ===== */
 function newCareer(o){
- const V=[{age:17,ovr:R(48,58),pot:R(70,92)},{age:17,ovr:R(58,64),pot:R(90,99)},{age:17,ovr:R(42,50),pot:R(65,80)},{age:30,ovr:R(78,86),pot:90}][o.sc];
- const L=LC[o.lg];let ci=o.cb>=0?o.cb:-1;
- if(ci<0){const pool=L.filter(i=>o.sc==3?CL[i].t>=3:CL[i].t<=2);ci=pick(pool.length?pool:L)}
+ const V={age:17,ovr:R(46,56),pot:R(70,92)};
+ const lg=o.lg>=0&&o.lg<LC.length?o.lg:0,ci=pick(L3[lg]);
  const K=infl(o.y0);
- S={v:3,name:o.name||'Игрок',pos:o.pos,ct:o.ct,y0:o.y0,age:V.age,season:1,ci,A:genAttrs(o.pos,V.ovr),pot:V.pot,ovr:V.ovr,tt:o.tt||'',
-  energy:100,form:6.5,load:1,mode:1,fc:0,inj:0,injN:'',susp:0,out:0,cr:o.tt=='lead'?65:50,ag:0,
-  cash:+([.2,.2,0,8][o.sc]*K).toFixed(2),wage:+([.1,.1,.05,5][o.sc]*K).toFixed(2),fame:o.sc==3?4:0,contract:R(2,3),tp:3,nat:0,
+ S={v:3,name:o.name||'Игрок',pos:o.pos,ct:o.ct,y0:o.y0,age:V.age,season:1,ci,A:genAttrs(o.pos,V.ovr),pot:V.pot,ovr:V.ovr,
+  energy:100,form:6.5,load:1,mode:1,fc:0,inj:0,injN:'',susp:0,out:0,cr:50,ag:0,
+  cash:+(.1*K).toFixed(2),wage:+(.05*K).toFixed(2),fame:0,contract:R(2,3),tp:3,nat:0,
   tot:{apps:0,g:0,a:0,sv:0,cs:0,caps:0,cg:0},hist:[],tr:[],aw:[],nt:[],log:[],dec:null,done:false,fin:false,loan:-1,phase:null,flags:{},lgs:[CL[ci].l],yrs:{},own:{},
-  prevRank:0,prevClub:-1,inv:0,pt:0,dt:0,goal:'',win:false,wd:false,sc:o.sc};
+  prevRank:0,prevClub:-1,inv:0,pt:0,dt:0,win:false,wd:false};
  initMem();recalc();setRole();newSeason();save();
 }
 /* ===== season setup ===== */
@@ -786,7 +835,7 @@ function contOf(c,Y){const l=c.l;
  if(l==12)return{n:'Лига чемпионов КОНКАКАФ',size:8,pool:topL(12).slice()};
  return null}
 function newSeason(){
- if(!S.mem)initMem();const c=club();S.div=S.mem2[c.l].indexOf(S.ci)>=0?1:0;const L=(S.div?S.mem2[c.l]:S.mem[c.l]).slice(),n=L.length,Y=Yr();
+ if(!S.mem||!S.mem3)fixMem();const c=club();setDiv();const L=[S.mem,S.mem2,S.mem3][S.div][c.l].slice(),n=L.length,Y=Yr();
  if(L.indexOf(S.ci)<0)L.push(S.ci);
  let arr=shuffle(L.slice()),rd=[];
  for(let r=0;r<n-1;r++){const fx=[];for(let i=0;i<n/2;i++){const a=arr[i],b=arr[n-1-i];fx.push((r+i)%2?[a,b]:[b,a])}rd.push(fx);arr.splice(1,0,arr.pop())}
@@ -856,7 +905,7 @@ function koRound(T,kind){
  const h=pr[0]==S.ci,o=h?pr[1]:pr[0];
  const E=playerMatch({h,o,comp:kind,ko:true,lab:rn});E.cn=T.n;E.rn=rn;
  finishKO(T,d,{E,pr,o});T.res.push(koTxt(E,o));
- if(E.pk&&E.st==1&&P(.6)){const d=mkPk(T,E,o);if(S.q){pkRes(d.o.slice().sort((a,b)=>b.p-a.p)[0]);return}S.dec=d;return}
+ if(E.pk&&E.st==1&&P(.6)){const d=mkPk(T,E,o);S.dec=d;return}
  maybeEv(E)}
 function mkPk(T,E,o){const sk=(S.A.sh-70)/160;
  return{title:'🥅 Серия пенальти',text:'Счёт равный, решающий удар за вами. '+E.cn+', '+E.rn+' против '+esc(CL[o].n),o:[{t:'🎯 Бить в угол · '+Math.round(cl(.70+sk,.3,.95)*100)+'%',a:'pk',p:cl(.70+sk,.3,.95),tid:T===S.cup?'C':'E',op:o,md:E.md},{t:'💪 Бить уверенно в центр · '+Math.round(cl(.82+sk/2,.4,.97)*100)+'%',a:'pk',p:cl(.82+sk/2,.4,.97),tid:T===S.cup?'C':'E',op:o,md:E.md}]}}
@@ -915,7 +964,7 @@ function playerMatch(o){
   if(P(pp)){
    let min=pp>.75?R(80,90):pp>.45?R(55,90):R(15,45);if(E.et&&min>=80)min=120;
    const pm=Math.min(1,min/90),wg={A:.38,M:.13,D:.04,G:0}[g],wa={A:.16,M:.22,D:.07,G:.01}[g];
-   const qg=(S.ovr+S.A.sh)/140*MD[S.mode]*FG[S.fc][0]*(S.tt=='bomb'?1.3:1),qa=(S.ovr+S.A.p)/140*MD[S.mode]*FG[S.fc][1]*(S.tt=='tech'?1.3:1);
+   const qg=(S.ovr+S.A.sh)/140*MD[S.mode]*FG[S.fc][0],qa=(S.ovr+S.A.p)/140*MD[S.mode]*FG[S.fc][1];
    let go=0,as=0,sv=0;
    for(let i=0;i<gf;i++){if(P(wg*qg*pm))go++;else if(P(wa*qa*pm))as++}
    if(g=='G')sv=Math.max(0,R(0,3)+ga+(P(.5)?2:0));
@@ -924,12 +973,12 @@ function playerMatch(o){
    let rt=6.3+(gf-ga)*.3+go*.8+as*.5+(cs0?.6:0)+sv*.1+(Math.random()-.5)*1.2+(S.ovr-65)/30-(E.yc?.2:0)-(E.rc?1.5:0);rt=cl(rt,4,10);
    ss.apps++;ss.g+=go;ss.a+=as;ss.sv+=sv;ss.cs+=cs0?1:0;ss.rt+=rt;ss.yc+=E.yc;ss.rc+=E.rc;
    S.form=S.form*.7+rt*.3;S.energy=cl(S.energy-[3,6,10][S.load]+4,0,100);
-   S.cr=cl(S.cr+(rt-6.7)*(S.tt=='lead'?2.2:1.5),0,100);
+   S.cr=cl(S.cr+(rt-6.7)*1.5,0,100);
    S.tp+=[.35,.5,.7][S.load]+(rt>=7.5?.3:0);
    if(go>=3)S.flags.hat=1;
    E.rt=rt;E.min=min;E.a=as;E.sv=sv;E.cs=cs0?1:0;
    for(let i=0;i<go;i++)E.gm.push(R(1,Math.min(90,min)));E.gm.sort((a,b)=>a-b);
-   if(P((.012+S.load*.01+(S.mode==2?.012:0)+(S.energy<30?.03:0))*(S.dt?.5:1)*(S.tt=='iron'?.6:1)))applyInj(E);
+   if(P((.012+S.load*.01+(S.mode==2?.012:0)+(S.energy<30?.03:0))*(S.dt?.5:1)))applyInj(E);
   }else{E.st=3;S.energy=cl(S.energy+6,0,100)}
  }
  E.my=S.ci;try{E.tl=mkTL(E)}catch(e){}
@@ -973,7 +1022,7 @@ const EVT=[
 {t:'🥼 Предложение из Азии',x:'Агент приносит контракт на огромные деньги',k:1,w:()=>S.age>=28,o:[{t:'🔍 Узнать условия',ok:['Клубы готовы говорить','t']},{t:'🙅 Не интересно',ok:['Остаёмся','']}]},
 {t:'🎓 Мастер-класс легенды',x:'Бывшая звезда клуба предлагает позаниматься',o:[{t:'🙏 Пойти на тренировку',p:.8,ok:['Вы многому научились','tp,f+'],no:['Лишний стресс','e-']},{t:'😴 Остаться дома',ok:['Отдых тоже важен','e+']}]}
 ];
-const evP=()=>S&&S.q?0:[0,.05,.1,.2][META.set.ev];
+const evP=()=>[0,.05,.1,.2][META.set.ev];
 function maybeEv(E){if(S.dec||S.phase||!E||E.st!=1||!P(evP()))return;S.dec=mkEv()}
 function mkEv(){let c=EVT.map((e,i)=>i).filter(i=>!EVT[i].w||EVT[i].w());
  const ar=c.filter(i=>EVT[i].ar);if(ar.length&&P(.7))c=ar;
@@ -995,21 +1044,24 @@ function fx(f){const s=S.ss,K=v=>S.cr=cl(S.cr+v,0,100);
 function evr(o){const z=EVT[o.i].o[o.j],r=P(prb(z))?z.ok:(z.no||z.ok);S.log.unshift(EVT[o.i].t+': '+r[0]);(r[1]||'').split(',').forEach(f=>{if(f)fx(f)})}
 /* ===== transfers ===== */
 function offers(opt){
- const c=club(),q=AG[S.ag].q,Y=Yr(),o=[];
- const lv=cl(Math.round((S.ovr-50)/9)+(S.fame>=8?1:0)+(opt.tp?1:0),1,5);
+ const c=club(),q=AG[S.ag].q,Y=Yr(),o=[],kc=kOf(S.ci);
+ const lv=cl(Math.round((S.ovr-48)/7)+(S.fame>=8?1:0)+(opt.tp?1:0),1,6);
+ /* вверх по лестнице: минимум 2 сезона в клубе и нормальный прошлый сезон; в высшем дивизионе без ограничений */
+ const h=S.hist[S.hist.length-1],good=!!h&&h.apps>=Math.round((h.n-1)*2*.35)&&+h.rt>=6.4,up=kc>=3||((S.yrs[S.ci]||0)>=2&&good);
+ const stp=1+(S.ovr-pw(c,Y)>=10?1:0),kmax=up?Math.min(6,kc+stp):kc;
  const n=2+(q>=2?1:0)+(q>=3?1:0);
  for(let i=0;i<n;i++){
-  const t=cl(lv+R(-1,1)+(q&&P(.25*q)?1:0)-(!q&&P(.3)?1:0),1,5);
-  const pool=CL.map((x,j)=>j).filter(j=>j!=S.ci&&CL[j].t==t&&!o.some(z=>z.c==j)&&(opt.lg==null?(!opt.same||CL[j].l==c.l):CL[j].l==opt.lg)&&(!opt.same||(CL[j].l==c.l&&S.tb[j])));
+  const kt=cl(Math.min(lv+R(-1,1)+(q&&P(.25*q)?1:0)-(!q&&P(.3)?1:0),kmax),1,6);
+  const pool=CL.map((x,j)=>j).filter(j=>j!=S.ci&&kOf(j)==kt&&dvOf(j)>=0&&(opt.lg!=null||kc>=3||CL[j].l==c.l)&&(kt<=kc||pw(CL[j],Y)-S.ovr<=6)&&!o.some(z=>z.c==j)&&(opt.lg==null?(!opt.same||CL[j].l==c.l):CL[j].l==opt.lg)&&(!opt.same||(CL[j].l==c.l&&S.tb[j])));
   if(!pool.length)continue;
   const j=pick(pool),d=S.ovr-pw(CL[j],Y),r=d>=4?'⭐':d>=-3?'✅':d>=-9?'🔄':'🪑';
-  const fee=+(val()*(.7+t*.15+Math.random()*.4)).toFixed(1),w=wgf(t),y=R(2,5);
-  o.push({t:'<span class="of">'+'<b>'+esc(CL[j].n)+'</b> '+r+'<small>'+LG[CL[j].l]+' · '+TN[t-1]+'<br>💶 '+fm(fee)+' млн · 💼 '+fm(w)+' млн/год · '+y+' г.</small></span>',a:'move',c:j,f:fee,w,y})}
- if(!opt.same&&S.age<26){const pool=CL.map((x,j)=>j).filter(j=>CL[j].t<c.t&&(opt.lg==null||CL[j].l==opt.lg));if(pool.length){const j=pick(pool);o.push({t:'🔁 Аренда на сезон: '+esc(CL[j].n)+' · '+LG[CL[j].l],a:'loan',c:j})}}
+  const fee=+(val()*(.5+kt*.13+Math.random()*.4)).toFixed(1),w=wgf(kt),y=R(2,5);
+  o.push({t:'<span class="of">'+'<b>'+esc(CL[j].n)+'</b> '+r+'<small>'+LG[CL[j].l]+' · '+tlab(j)+'<br>💶 '+fm(fee)+' млн · 💼 '+fm(w)+' млн/год · '+y+' г.</small></span>',a:'move',c:j,f:fee,w,y})}
+ if(!opt.same&&S.age<26&&kc>1){const pool=CL.map((x,j)=>j).filter(j=>j!=S.ci&&dvOf(j)>=0&&kOf(j)<kc&&kOf(j)>=kc-2&&(opt.lg==null||CL[j].l==opt.lg));if(pool.length){const j=pick(pool);o.push({t:'🔁 Аренда на сезон: '+esc(CL[j].n)+' · '+LG[CL[j].l],a:'loan',c:j})}}
  return o}
 function windowCard(title,text,opt){
  const c=club(),o=[];
- if(opt.sum)o.push(S.contract>0?{t:'Остаться (контракт ещё '+S.contract+' г.)',a:'stay'}:{t:'Продлить контракт · 💼 '+fm(wgf(c.t))+' млн/год',a:'renew',w:wgf(c.t)});
+ if(opt.sum)o.push(S.contract>0?{t:'Остаться (контракт ещё '+S.contract+' г.)',a:'stay'}:{t:'Продлить контракт · 💼 '+fm(wgf(kOf(S.ci)))+' млн/год',a:'renew',w:wgf(kOf(S.ci))});
  else o.push({t:'Закрыть окно',a:'stay'});
  offers(Object.assign({same:S.phase!='win'},opt)).forEach(x=>o.push(x));
  if(opt.sum)o.push({t:'Завершить карьеру',a:'retire'});
@@ -1030,7 +1082,6 @@ function act(i){
   switch(o.a){
    case 'ev':S.dec=null;evr(o);if(S.dec&&S.dec.title&&S.dec.o)return render();break;
    case 'pk':S.dec=null;pkRes(o);break;
-   case 'gl':S.goal=o.v;S.dec=null;break;
    case 'move':S.prev=S.dec;S.dec=negCard(o);save();return render();
    case 'back':S.dec=S.prev;S.prev=null;save();return render();
    case 'sign':S.dec=null;S.prev=null;doMove(o);break;
@@ -1046,20 +1097,9 @@ function act(i){
  }catch(e){errBox(e)}}
 function errBox(e){console.error(e);toastSafe('⚠ Ошибка: '+(e&&e.message));try{render()}catch(_){}}
 /* ===== step / season control ===== */
-function after(){if(S.q&&!S.done)autoTrain();if(S.dec||S.done||S.phase)return;if(S.ptr>=S.cal.length)endSeason();chkAch()}
-function step(n){try{if(!S||S.dec||S.done)return;const b0=S.log.find(x=>typeof x=='object');for(let i=0;i<n&&!S.dec&&!S.done&&!S.phase;i++){playSlot();after()}save();render();if(n==1&&typeof liveOpen=='function')liveOpen(b0)}catch(e){errBox(e)}}
-function seasonGo(){try{if(!S||S.dec||S.done)return;let g=0;while(!S.dec&&!S.done&&!S.phase&&g++<300){playSlot();after()}save();render()}catch(e){errBox(e)}}
-function autoTrain(){let g=0;const w=POSW[S.pos];
- while(g++<80){let b=-1,bv=0;K6.forEach((k,i)=>{const c=trainCost(S.A[k]);if(S.tp>=c&&S.A[k]<attrCap()){const v=w[i]/c;if(v>bv){bv=v;b=k}}});if(b<0)break;S.tp-=trainCost(S.A[b]);S.A[b]++;g+=0}
- if(g>1){recalc();setRole()}}
-function quickRun(n){try{if(!S||S.dec||S.done)return;let up=false;
- for(let i=0;i<n&&!S.done;i++){
-  let g=0;while(!S.dec&&!S.done&&!S.phase&&g++<400){playSlot();after()}
-  if(S.done||i==n-1)break;
-  const d=S.dec;if(!d||!/^Итоги/.test(d.title||''))break;
-  if(d.o.some(x=>x.a=='move'&&CL[x.c].t>club().t)){up=true;break}
-  act(0)}
- save();render();if(up)toast('📩 Пришло предложение от более сильного клуба')}catch(e){errBox(e)}}
+function after(){if(S.dec||S.done||S.phase)return;if(S.ptr>=S.cal.length)endSeason();chkAch()}
+/* один матч за нажатие: ни пачек матчей, ни пролистывания сезона */
+function step(){try{if(!S||S.dec||S.done||S.phase)return;const b0=S.log.find(x=>typeof x=='object');playSlot();after();save();render();if(typeof liveOpen=='function')liveOpen(b0)}catch(e){errBox(e)}}
 function openWin(){if(!S||S.dec||!S.win||S.wd)return;S.wd=true;S.dec=windowCard('💱 Зимнее окно','Переход возможен только внутри вашей лиги',{});save();render()}
 /* ===== national team ===== */
 function natSeason(Y,lines,trs,fl){
@@ -1090,21 +1130,37 @@ function natSeason(Y,lines,trs,fl){
  S.tot.caps+=caps;S.tot.cg+=cg}
 /* ===== end of season ===== */
 function movement(c,st,lines){
- const Y=Yr(),me=S.ci;
- for(let l=0;l<S.mem.length;l++){const k=relK(l);if(!k||S.mem2[l].length<k)continue;const T=S.mem[l],B=S.mem2[l],nz=i=>pw(CL[i],Y)+R(-12,12);let down,up;
-  if(l==c.l){if(!S.div){down=st.slice(-k);up=B.slice().sort((a,b)=>nz(b)-nz(a)).slice(0,k)}else{up=st.slice(0,k);down=T.slice().sort((a,b)=>nz(a)-nz(b)).slice(0,k)}}
-  else{down=T.slice().sort((a,b)=>nz(a)-nz(b)).slice(0,k);up=B.slice().sort((a,b)=>nz(b)-nz(a)).slice(0,k)}
-  S.mem[l]=T.filter(i=>down.indexOf(i)<0).concat(up);S.mem2[l]=B.filter(i=>up.indexOf(i)<0).concat(down);
-  if(l==c.l){
-   if(!S.div&&down.indexOf(me)>=0){lines.push('⬇ '+esc(c.n)+' вылетает во 2-й дивизион');S.prevClub=-1;S.flags.rel=1}
-   else if(S.div&&up.indexOf(me)>=0){lines.push('⬆ '+esc(c.n)+' выходит в высший дивизион!');S.prevClub=-1;S.flags.pro=1}
-   else if(!S.div){const nm=up.map(i=>CL[i].n).join(', ');lines.push('⬆ Поднимаются из 2-го дивизиона: '+esc(nm))}}
- }}
+ const Y=Yr(),me=S.ci,dn3=['высший дивизион','2-й дивизион','3-ю лигу'];
+ for(let l=0;l<S.mem.length;l++){const k=relK(l),D=[S.mem[l],S.mem2[l],S.mem3[l]];
+  if(!k||D.some(a=>a.length<k*2+1))continue;
+  const nz=i=>pw(CL[i],Y)+R(-12,12);
+  /* порядок в таблице: у дивизиона игрока — настоящая таблица, у остальных — по силе с шумом */
+  const ord=D.map((a,d)=>{
+   if(l==c.l&&d==S.div){
+    if(st.length==a.length&&st.every(i=>a.indexOf(i)>=0))return st.slice();
+    /* таблица не совпадает с составом дивизиона (старое сохранение посреди сезона): ставим вас на то же относительное место */
+    const o=a.slice().sort((x,y)=>nz(y)-nz(x)).filter(i=>i!=me),r=Math.max(0,st.indexOf(me));
+    o.splice(cl(Math.round(r/Math.max(1,st.length-1)*o.length),0,o.length),0,me);return o}
+   return a.slice().sort((x,y)=>nz(y)-nz(x))});
+  const dn=[ord[0].slice(-k),ord[1].slice(-k)],up=[ord[1].slice(0,k),ord[2].slice(0,k)];
+  const out=(a,b)=>a.filter(i=>b.indexOf(i)<0);
+  S.mem[l]=out(D[0],dn[0]).concat(up[0]);
+  S.mem2[l]=out(out(D[1],up[0]),dn[1]).concat(dn[0],up[1]);
+  S.mem3[l]=out(D[2],up[1]).concat(dn[1]);
+  if(l==c.l){const d=S.div;
+   if(d==0&&dn[0].indexOf(me)>=0){lines.push('⬇ '+esc(c.n)+' вылетает во 2-й дивизион');S.prevClub=-1;S.flags.rel=1}
+   else if(d==1&&up[0].indexOf(me)>=0){lines.push('⬆ '+esc(c.n)+' выходит в высший дивизион!');S.prevClub=-1;S.flags.pro=1}
+   else if(d==1&&dn[1].indexOf(me)>=0){lines.push('⬇ '+esc(c.n)+' вылетает в 3-ю лигу');S.prevClub=-1;S.flags.rel=1}
+   else if(d==2&&up[1].indexOf(me)>=0){lines.push('⬆ '+esc(c.n)+' выходит во 2-й дивизион!');S.prevClub=-1;S.flags.u3=1}
+   else if(d==0){lines.push('⬆ Поднимаются из 2-го дивизиона: '+esc(up[0].map(i=>CL[i].n).join(', ')))}
+   else if(d==1){lines.push('⬆ Поднимаются из 3-й лиги: '+esc(up[1].map(i=>CL[i].n).join(', ')))}
+  }}
+ }
 function endSeason(){
  S.phase='win';
  const ss=S.ss,c=club(),Y=Yr(),M=S.rounds.length,avg=ss.apps?ss.rt/ss.apps:0,st=standings(),rank=st.indexOf(S.ci)+1,n=st.length;
  const trs=[],aws=[],lines=[],fl={};
- if(rank==1)trs.push(S.div?'Победа во 2-м дивизионе '+LGT[c.l]+' '+sLab(Y):'Чемпион '+LGT[c.l]+' '+sLab(Y));
+ if(rank==1)trs.push(S.div==2?'Победа в 3-й лиге '+LGT[c.l]+' '+sLab(Y):S.div?'Победа во 2-м дивизионе '+LGT[c.l]+' '+sLab(Y):'Чемпион '+LGT[c.l]+' '+sLab(Y));
  if(S.cup.done&&S.cup.win==S.ci)trs.push(S.cup.n+' '+sLab(Y));
  if(S.eu&&S.eu.done&&S.eu.win==S.ci)trs.push(S.eu.n+' '+sLab(Y));
  const dbl=trs.length>=2;
@@ -1120,16 +1176,13 @@ function endSeason(){
  if(POS[S.pos]=='G'&&ss.cs>=Math.round(M*.35))aws.push('Золотая перчатка '+sLab(Y));
  if(avg>=7.2&&ss.apps>=M*.5)aws.push('Команда года '+sLab(Y));
  if(S.ovr>=86&&avg>=7.6&&ss.apps>=M*.6&&((!S.div&&rank<=3)||fl.worldCup||(S.eu&&S.eu.done&&S.eu.win==S.ci))&&P(.5))aws.push('Золотой мяч '+sLab(Y));
+ if(S.div==0)S.flags.top=1;
+ if(S.div)for(let i=0;i<aws.length;i++)aws[i]+=' · '+(S.div+1)+'-й див.';
  S.tr.push(...trs);S.aw.push(...aws);
  ['apps','g','a','sv','cs'].forEach(k=>S.tot[k]+=ss[k]);
  if(dbl)S.flags.dbl=1;if(trs.length>=3&&rank==1)S.flags.trip=1;
  if(ss.apps>=M*.95&&!S.flags.injThis)S.flags.iron=1;
  if(S.age<=19&&S.ovr>=75)S.flags.wk=1;
- if(S.goal){let ok=false;
-  if(S.goal=='g')ok=ss.g+ss.a+((POS[S.pos]=='G'||POS[S.pos]=='D')?ss.cs:0)>=({A:Math.round(M*.45),M:Math.round(M*.3),D:Math.round(M*.25),G:Math.round(M*.3)}[POS[S.pos]]);
-  else if(S.goal=='r')ok=avg>=7.2;else ok=rank<=3;
-  if(ok){S.cash+=pc(.3)+S.wage*.3;S.fame+=1;lines.push('🎯 Цель сезона выполнена: бонус и слава')}else{S.cr=cl(S.cr-4,0,100);lines.push('🎯 Цель сезона не выполнена')}
-  S.goal=''}
  /* growth */
  const old=S.ovr;
  K6.forEach((k,i)=>{const a=S.age;let d;
@@ -1137,7 +1190,7 @@ function endSeason(){
   if((k=='s'||k=='ph')&&a>=29)d-=R(0,2);
   if((k=='p'||k=='df')&&a>=29&&a<=33)d+=R(0,1);
   if(a<30){if(S.load==2&&P(.4))d++;if(S.load==0&&P(.4))d--}
-  if(S.pt&&P(.5))d++;if(S.tt=='grow'&&a<=26&&P(.4))d++;
+  if(S.pt&&P(.5))d++;
   if(d>0&&S.A[k]>=attrCap())d=0;
   S.A[k]=cl(S.A[k]+d,20,97)});
  recalc();const gr=S.ovr-old;
@@ -1148,7 +1201,7 @@ function endSeason(){
  if(inv)lines.push('📈 Инвестиции вернули '+fm(inv)+' млн (вложено '+fm(S.inv)+')');
  lines.push('💶 Доход за сезон: '+fm(inc*(1-AG[S.ag].f))+' млн €');
  S.inv=0;S.pt=0;S.dt=0;
- S.hist.push({y:S.season,yr:Y,age:S.age,club:c.n+(S.loan>=0?' (аренда)':'')+(S.div?' (2 див.)':''),dv:S.div,lg:c.l,apps:ss.apps,g:ss.g,a:ss.a,rt:avg.toFixed(2),rank,n,ovr:S.ovr,tr:trs.length,pos:S.pos});
+ S.hist.push({y:S.season,yr:Y,age:S.age,club:c.n+(S.loan>=0?' (аренда)':'')+(S.div?' ('+(S.div+1)+' див.)':''),dv:S.div,lg:c.l,apps:ss.apps,g:ss.g,a:ss.a,rt:avg.toFixed(2),rank,n,ovr:S.ovr,tr:trs.length,pos:S.pos});
  S.yrs[S.ci]=(S.yrs[S.ci]||0)+1;
  S.prevRank=rank;S.prevClub=S.ci;movement(c,st,lines);
  /* contract & age */
@@ -1190,6 +1243,8 @@ const ACH=[
 {id:'ls',n:'Дальнобойщик',d:'Забить с 30 метров',f:s=>s.flags.ls},
 {id:'caps',n:'Опора сборной',d:'50 матчей за сборную',f:s=>s.tot.caps>=50},
 {id:'pro',n:'Лифт',d:'Вывести клуб из 2-го дивизиона в высший',f:s=>s.flags.pro},
+{id:'u3',n:'Первый шаг',d:'Выйти из 3-й лиги во 2-й дивизион',f:s=>s.flags.u3},
+{id:'top',n:'Высшая лига',d:'Отыграть сезон в высшем дивизионе',f:s=>s.flags.top},
 {id:'acad',n:'Наставник',d:'Открыть футбольную академию',f:s=>s.flags.acad}];
 function chkAch(){if(!S)return;let ch=false;ACH.forEach(a=>{if(!META.ach[a.id]){let ok=false;try{ok=a.f(S)}catch(e){}if(ok){META.ach[a.id]=Date.now();ch=true;toastSafe('🏅 Достижение: '+a.n)}}});if(ch)saveMeta()}
 function score(){const t=S.tot;return Math.round(t.g*3+t.a*2+S.tr.length*40+S.aw.length*25+t.apps/4+Math.max(0,...S.hist.map(x=>x.ovr),S.ovr)*3+t.caps*2+t.cs*1.5)}
@@ -1387,7 +1442,7 @@ const MGBOTC=['Норд Юнайтед','Красный Орёл','Золото�
 /* пирамида страны: в каждом дивизионе столько клубов, сколько в чемпионате (в Англии 20). Мой дивизион хранит N-1 соперников, остальные N клубов. */
 const MGN=h=>LC[h].length;
 const mgT=n=>{const c=mgNameMap()[n];return c&&c.t!=null?c.t:(MG&&MG.lg&&MG.lg.xt&&MG.lg.xt[n])||1.2};
-function mgLgInit(){const h=MG.home|0,N=MGN(h),cur=new Set(LC[h]),a=CL.filter(c=>c.l===h&&!cur.has(c.i)).sort((x,y)=>y.t-x.t||x.i-y.i).map(c=>c.n),k=Math.ceil(a.length/2),x=MGX[h]||[[],[]],xt={};
+function mgLgInit(){const h=MG.home|0,N=MGN(h),cur=new Set(LC[h]),a=CL.filter(c=>c.l===h&&!c.p&&!cur.has(c.i)).sort((x,y)=>y.t-x.t||x.i-y.i).map(c=>c.n),k=Math.ceil(a.length/2),x=MGX[h]||[[],[]],xt={};
  const fill=(arr,ex,t,dv)=>{ex.forEach(n=>{xt[n]=t});const l=arr.concat(ex);MGFCD.forEach(c=>{if(l.length<N&&c[3]==dv&&l.indexOf(c[0])<0)l.push(c[0])});return l.slice(0,N)};
  const L={1:LC[h].map(i=>CL[i].n),2:fill(a.slice(0,k),x[0],1.6,2),3:fill(a.slice(k),x[1],1.2,3),xt:xt},d=mgDvOf();L[d]=L[d].slice(0,N-1);return L}
 const mgBotNames=()=>{const X=MG,c=mgComp(),dv=mgDvOf();
@@ -1400,7 +1455,7 @@ function mgPyr(){const X=MG,L=X.lg;if(!L)return;const d=mgDvOf(),tb=mgTable(),n=
  if(d>1)L[d-1]=L[d-1].filter(x=>fromUp.indexOf(x)<0).concat(up);
  if(d<3)L[d+1]=L[d+1].filter(x=>fromDn.indexOf(x)<0).concat(dn);
  L[d]=L[d].filter(x=>!gone.has(x)).concat(fromUp,fromDn)}
-const mgNameMap=()=>{if(mgNameMap.m)return mgNameMap.m;const m={};CL.forEach(c=>{if(!m[c.n])m[c.n]=c});FCL.forEach(c=>{m[c.n]=c});return mgNameMap.m=m};
+const mgNameMap=()=>{if(mgNameMap.m)return mgNameMap.m;const m={};CL.forEach(c=>{if(!c.p&&!m[c.n])m[c.n]=c});FCL.forEach(c=>{m[c.n]=c});return mgNameMap.m=m};
 const mgBadgeN=(n,me)=>badge(me?{n:n,i:2}:(mgNameMap()[n]||{n:n,i:mgHash(n)%9}),14);
 function mgBots(){const X=MG,nm=mgBotNames(),bg=MGBUD[mgDvOf()];
  const ref=X.sq.length?mgSquadVal(X.sq)+X.bank:0;
@@ -1688,14 +1743,17 @@ function mgMenuCard(){
  if(!MG)return'<div class="c slot"><div class="sl-h"><div class="plus mg">🧠</div><div><b>Режим тренера</b><div class="mu">Начни с Третьей лиги и поднимайся до Высшей. Фэнтези из игроков 1990–2026</div></div></div><div class="row"><button onclick="mgOpen()">Начать</button></div></div>';
  const c=mgComp(),rank=mgTable().findIndex(r=>r.me)+1;
  return'<div class="c slot"><div class="sl-h"><div class="plus mg">🧠</div><div><b>Режим тренера · '+esc(MG.name)+'</b><div class="mu">'+c.ic+' '+esc(c.n)+' · сезон '+MG.season+' · '+(MG.ph=='end'?'сезон окончен':'тур '+MG.gw+'/'+c.G)+' · место '+rank+'</div></div></div><div class="row"><button onclick="mgOpen()">▶ Продолжить</button><button class="'+(MU.del?'r':'s')+'" onclick="mgDel()">'+(MU.del?'⚠ Точно удалить?':'🗑')+'</button></div></div>'}
-function mgCompOpts(sel,dv){
- const pk=mgPicks(dv),o=c=>'<option value="'+c.id+'"'+(c.id==sel?' selected':'')+'>'+c.ic+' '+esc(c.n)+' · '+c.G+' т.</option>';
- const lg=pk.filter(c=>c.l!=null).map(o).join(''),eu=pk.filter(c=>c.bt).map(o).join('');
- return(lg?'<optgroup label="Высшая лига: чемпионаты">'+lg+'</optgroup>':'')+(eu?'<optgroup label="Еврокубок (вы квалифицировались)">'+eu+'</optgroup>':'')+(!lg&&!eu?pk.map(o).join(''):'')}
+function mgCompItems(dv){
+ const pk=mgPicks(dv),o=c=>({v:c.id,h:c.ic+' '+esc(c.n)+' · '+c.G+' т.'}),lg=pk.filter(c=>c.l!=null).map(o),eu=pk.filter(c=>c.bt).map(o),r=[];
+ if(lg.length)r.push({hdr:'Высшая лига: чемпионаты'},...lg);
+ if(eu.length)r.push({hdr:'Еврокубок (вы квалифицировались)'},...eu);
+ if(!lg.length&&!eu.length)r.push(...pk.map(o));
+ return r}
+function mgPickLg(v){MU.lg=+v;render()}
 function vMgNew(){
  return'<h1 class="ttl">🧠 Режим тренера</h1><div class="c form"><p class="mu">Выберите страну и создайте свой клуб. Вы начинаете в <b>Третьей лиге</b> с бюджетом '+MGB0+' млн и слабыми дешёвыми игроками. Соперники — настоящие клубы выбранной страны, в таблице столько же команд, сколько в её чемпионате (в Англии 20), а после каждого тура вы видите, какое место занимает ваш клуб. Займите место в топ-2 и поднимайтесь: Вторая лига, потом Высшая (чемпионат выбранной страны). Звёзды 1990–2026 доступны только в Высшей лиге, а в еврокубок (ЛЧ, ЛЕ, ЛК) попадают лучшие по итогам чемпионата.</p>'
  +'<p class="mu qh">У каждого игрока свой характер: одни ссорятся с тренером часто, другие почти никогда. Ваши решения в конфликтах влияют на стабильность игроков и на авторитет команды.</p>'
- +'<label for="mgc">Страна</label><select id="mgc">'+LG.map((n,i)=>'<option value="'+i+'">'+esc(n)+'</option>').join('')+'</select>'
+ +'<label for="mgc-b">Страна</label>'+fsel('mgc',LG.map((n,i)=>({v:i,h:esc(n)})),0)
  +'<label for="mgn">Название клуба</label><input id="mgn" maxlength="22" placeholder="Например, Дикие медведи" autocomplete="off">'
  +'<div class="row"><button onclick="mgStart()">Начать</button><button class="s" onclick="U.scr=\'menu\';render()">Назад</button></div></div>'}
 const mgTrendR=()=>{const L=MG&&MG.log[0];if(!L||L.gw!=MG.gw||L.pr==null)return'';const d=L.pr-L.rank;return d>0?' ▲'+d:d<0?' ▼'+(-d):''};
@@ -1750,7 +1808,7 @@ function mgPlaceBar(){const X=MG;if(!X||X.ph!='play'||X.gw<1)return'';const L=X.
  return'<div class="c plc '+i.cls+'"><div class="plc-t"><b>'+i.rank+'-е место</b><span>из '+i.n+'</span>'+tr+'</div><small>Тур '+X.gw+'/'+mgComp().G+' · '+L.pt+' очк. за тур · всего '+X.tot+'</small>'+(i.zone?'<div class="plc-z">'+i.zone+'</div>':'')+'</div>'}
 function mgMini(){const X=MG,rank=mgTable().findIndex(r=>r.me)+1;
  return'<div class="mini"><div class="mi"><div class="plus mg">🧠</div><div><b>'+esc(X.name)+' <em>'+f1(X.bank)+'</em></b><small>#'+rank+mgTrendR()+' · '+X.tot+' очк. · тур '+X.gw+'/'+mgComp().G+'</small></div></div>'
- +(X.ph=='play'&&X.sq.length>=15?(X.pend&&X.pend.length?'<button class="r" onclick="MU.tab=0;render();scrTop()">⚠ Решить ('+X.pend.length+')</button>':'<button onclick="mgPlay(1)">▶ Тур</button><button class="s2" onclick="mgPlay(5)">⏩</button>'):'')+'</div>'}
+ +(X.ph=='play'&&X.sq.length>=15?(X.pend&&X.pend.length?'<button class="r" onclick="MU.tab=0;render();scrTop()">⚠ Решить ('+X.pend.length+')</button>':'<button onclick="mgPlay(1)">▶ Тур</button>'):'')+'</div>'}
 function mgHead(){const X=MG,c=mgComp(),tb=mgTable(),rank=tb.findIndex(r=>r.me)+1;
  return'<div class="hero mgh"><div class="hi"><div class="nm">🧠 '+esc(X.name)+'</div><div class="cb"><span>'+c.ic+' '+esc(c.n)+'</span></div><div class="chips"><i>сезон '+X.season+'</i><i>🏆 титулов: '+X.titles+'</i>'+(c.dv?'':'<i>'+MGDVN[mgDvOf()]+'</i>')+(c.l!=null?'<i>🏠 +10% игрокам лиги</i>':c.bt?'<i>⭐ +бонус клубам уровня кубка</i>':'')+'</div></div></div>'
  +'<div class="g stat"><div><b>'+f1(X.bank)+'</b><span>💰 баланс</span></div><div><b>#'+rank+'</b><span>место из '+tb.length+'</span></div><div><b>'+X.tot+'</b><span>очки</span></div><div><b>'+X.gw+'/'+c.G+'</b><span>тур</span></div></div>'}
@@ -1761,7 +1819,7 @@ function mgCtl(){const X=MG;
   +mgMoveHtml()+'<div class="row"><button onclick="mgNext()">▶ Новый сезон</button></div></div>'}
  const miss=15-X.sq.length,minc=+MGGL.reduce((a,g)=>{const m=Math.max(0,MGNEED[g]-X.sq.filter(id=>MGM[id].g==g).length);return a+(m?m*mgMinP(g):0)},0).toFixed(1);
  if(miss>0)return'<div class="c"><h2>Соберите состав</h2><p class="mu">Не хватает игроков: '+miss+'. Состав: 2 вратаря, 5 защитников, 5 полузащитников, 3 нападающих. Баланс '+f1(X.bank)+', на самых дешёвых нужно не меньше '+f1(minc)+'.'+(X.bank<minc?' <b>Денег не хватает: продайте кого-нибудь дорогого.</b>':'')+'</p><div class="row"><button onclick="mgAuto()">🎲 Добрать автоматически</button><button class="s" onclick="MU.tab=1;render()">🛒 Рынок</button></div></div>';
- return'<div class="ctl"><div class="go q"><button onclick="mgPlay(1)">▶ Тур '+(X.gw+1)+'</button><button class="s2" onclick="mgPlay(5)">⏩ 5 туров</button></div><div class="row sm"><button class="s" onclick="mgPlay(99)">⏭ До конца сезона</button></div>'+(mgFree()?'<p class="mu qh">До первого тура покупки и продажи без потерь и без лимита. Потом: продажа за 92% текущей цены, не больше 3 покупок за тур.</p>':'')+'</div>'}
+ return'<div class="ctl"><div class="go one"><button onclick="mgPlay(1)">▶ Тур '+(X.gw+1)+'</button></div>'+(mgFree()?'<p class="mu qh">До первого тура покупки и продажи без потерь и без лимита. Потом: продажа за 92% текущей цены, не больше 3 покупок за тур.</p>':'')+'</div>'}
 const mgTrend=p=>{const d=+(mgPr(p)-p.pr).toFixed(1);return Math.abs(d)>=.1?'<i class="tr2 '+(d>0?'up':'dn')+'">'+(d>0?'▲ +':'▼ −')+f1(Math.abs(d))+'</i>':''};
 function mgRow(p,btn,o){o=o||{};const c=MC(p.ci),X=MG,inj=X.inj[p.id]>0;
  const lp=X.lp&&X.lp[p.id],ptx=o.pts&&lp?'<span class="pts '+(lp[1]?(lp[0]>=8?'hot':lp[0]<=1?'cold':''):'off')+'">'+(lp[1]?(lp[0]>0?'+':'')+lp[0]:'—')+'</span>':'';
@@ -1800,7 +1858,7 @@ function mgTSquad(){const X=MG;
  +'<small>Схема '+form+' · стоимость состава '+f1(mgSquadVal(X.sq))+' · игроков '+n+'/15</small>'+mgFormBar()
  +(MU.sw?'<div class="swb">Выберите, с кем поменять · <a onclick="MU.sw=null;render()">отмена</a></div>':'')+'</div>';
  h+=mgAnBar()+mgOfBar()+mgMatchBar()+mgPlaceBar()+mgNewsBar()+mgQrBar()+mgDeadBar();h+=MU.view==0?mgPitch():mgList();
- if(X.ph=='play'&&n>=15)h+='<div class="c"><p class="mu qh">Нажмите на игрока: капитан, вице-капитан, замена или продажа. Если стартовый не сыграет, выйдет первый подходящий со скамейки.</p><div class="row"><button class="s" onclick="mgPlay(99)">⏭ До конца сезона</button></div></div>';
+ if(X.ph=='play'&&n>=15)h+='<div class="c"><p class="mu qh">Нажмите на игрока: капитан, вице-капитан, замена или продажа. Если стартовый не сыграет, выйдет первый подходящий со скамейки.</p></div>';
  return h}
 /* --- market --- */
 function mgBuyInfo(p){const X=MG,have=X.sq.map(id=>MGM[id]).filter(q=>q.g==p.g),full=have.length>=MGNEED[p.g],rep=full?have.slice().sort((a,b)=>(mgDead(b)>0)-(mgDead(a)>0)||a.e-b.e)[0]:null,pr=mgPr(p);
@@ -1902,13 +1960,13 @@ function mgMyTbl(){const tb=mgTable(),n=tb.length;
  return'<div class="tw"><table class="tb"><tr><th>#</th><th>Клуб</th><th>Тур</th><th>Очки</th></tr>'+tb.map((r,i)=>'<tr class="'+(r.me?'me ':'')+mgZone(i,n)+'"><td>'+(i+1)+'</td><td>'+mgBadgeN(r.n,r.me)+esc(r.n)+(r.me?'<em class="mn">вы</em>':'')+'</td><td>'+r.last+'</td><td><b>'+r.tot+'</b></td></tr>').join('')+'</table></div>'+mgLegend()}
 function mgTMgr(){return'<div class="c"><h2>📋 Таблица · '+esc(mgComp().n)+'</h2>'+mgMyTbl()+'</div>'}
 function mgTMy(){const X=MG,c=mgComp();
- return'<div class="c"><h2>📊 Таблицы лиг</h2><select aria-label="Лига" onchange="MU.lg=+this.value;render()"><option value="-1" selected>⭐ Моя лига · '+esc(c.n)+'</option>'+LG.map((g,i)=>'<option value="'+i+'">'+esc(g)+(c.l==i?' · ваш турнир':'')+'</option>').join('')+'</select>'
+ return'<div class="c"><h2>📊 Таблицы лиг</h2>'+fsel('mglg',[{v:-1,h:'⭐ Моя лига · '+esc(c.n)}].concat(LG.map((g,i)=>({v:i,h:esc(g)+(c.l==i?' · ваш турнир':'')}))),-1,'mgPickLg')
   +'<p class="mu qh">'+(X.gw?'Сыграно туров: '+X.gw+' из '+c.G+'.':'Сезон ещё не начался.')+' Ваш клуб «'+esc(X.name)+'» выделен. Таблицы настоящих чемпионатов: выберите страну в списке.</p>'+mgMyTbl()+'</div>'}
 function mgMine(){const m={};MG.sq.forEach(id=>{const p=MGM[id];m[p.ci]=(m[p.ci]||0)+1});return m}
 function mgTTables(){const X=MG,W=X.w,c=mgComp();let l=MU.lg;if(l==null)l=-1;if(l==-1)return mgTMy();
  const tb=W.L[l],ord=mgSortTb(tb),n=ord.length,tot=2*(n-1),md=W.md[l],mine=mgMine();
  const zc=n>=18?4:n>=14?3:2,ze=n>=18?2:n>=14?1:0,zb=l==12?0:(n>=16?3:2);
- let h='<div class="c"><h2>📊 Таблицы лиг</h2><select aria-label="Лига" onchange="MU.lg=+this.value;render()"><option value="-1">⭐ Моя лига · '+esc(c.n)+'</option>'+LG.map((g,i)=>'<option value="'+i+'"'+(i==l?' selected':'')+'>'+esc(g)+(c.l==i?' · ваш турнир':'')+'</option>').join('')+'</select>'
+ let h='<div class="c"><h2>📊 Таблицы лиг</h2>'+fsel('mglg',[{v:-1,h:'⭐ Моя лига · '+esc(c.n)}].concat(LG.map((g,i)=>({v:i,h:esc(g)+(c.l==i?' · ваш турнир':'')}))),l,'mgPickLg')
  +'<p class="mu qh">'+(md?'Сыграно туров: '+md+' из '+tot+'.':'Сезон ещё не начался.')+' Клубы, за которые играют ваши игроки, отмечены 🧠.</p>'
  +'<div class="tw"><table class="tb"><tr><th>#</th><th>Клуб</th><th>И</th><th>В</th><th>Н</th><th>П</th><th>±</th><th>О</th></tr>'
  +ord.map((ci,i)=>{const t=tb[ci],cc=CL[ci],z=i<zc?'z1':i<zc+ze?'z2':(zb&&i>=n-zb)?'z3':'',gd=t[4]-t[5];
@@ -1968,7 +2026,7 @@ function mgDecBar(){const X=MG;if(!X||X.ph!='play'||!X.pend||!X.pend.length)retu
 function mgZone(i,n){const dv=mgDvOf(),c=mgComp();if(c.bt)return'';if(dv==3)return i<2?'z1':'';if(dv==2)return i<2?'z1':i>=n-2?'z3':'';return i<2?'z1':i<6?'z2':i>=n-2?'z3':''}
 function mgLegend(){const dv=mgDvOf(),c=mgComp();if(c.bt)return'';
  return'<div class="legend"><span><i style="background:var(--acc)"></i>'+(dv==1?'ЛЧ':'повышение')+'</span>'+(dv==1?'<span><i style="background:var(--gold)"></i>ЛЕ (3–4), ЛК (5–6)</span>':'')+(dv<3?'<span><i style="background:var(--red)"></i>вылет</span>':'')+'</div>'}
-function mgMoveHtml(){const X=MG,dv=mgDvOf(),nx=X.mv=='up'?Math.max(1,dv-1):X.mv=='down'?Math.min(3,dv+1):dv,sel=d=>X.qual?'<label class="sl2" for="mgc2">Турнир следующего сезона</label><select id="mgc2">'+mgCompOpts(X.comp,d)+'</select>':'';
+function mgMoveHtml(){const X=MG,dv=mgDvOf(),nx=X.mv=='up'?Math.max(1,dv-1):X.mv=='down'?Math.min(3,dv+1):dv,sel=d=>X.qual?'<label class="sl2" for="mgc2-b">Турнир следующего сезона</label>'+fsel('mgc2',mgCompItems(d),X.comp):'';
  if(X.mv=='up')return'<p class="good">⬆ <b>Повышение!</b> Следующий сезон: «'+MGDVN[nx]+'». '+(nx==1?'Звёзды 1990–2026 охотнее пойдут к вам, откроются чемпионаты и борьба за еврокубки.':'Игроки посильнее охотнее согласятся на переход, но и всё дороже.')+'</p>'+(nx==1?sel(1):'')+'<p class="mu qh">Состав и деньги остаются.</p>';
  if(X.mv=='down')return'<p class="bad">⬇ <b>Вылет.</b> Следующий сезон: «'+MGDVN[nx]+'». Состав остаётся, но покупать можно только игроков этого дивизиона.</p><p class="mu qh">Состав и деньги остаются.</p>';
  if(dv==1)return(X.qual?'<p class="good">🏆 Путёвка в <b>'+MGCOMPS.find(c=>c.id==X.qual).n+'</b>. Её можно выбрать в списке или сыграть чемпионат. В еврокубках играют только клубы-участники: остальных игроков придётся заменить.</p>':'<p class="mu">Еврокубок не заработан: нужно 1–6 место в чемпионате (1–2 ЛЧ, 3–4 ЛЕ, 5–6 ЛК).</p>')+sel(1)+'<p class="mu qh">Состав и деньги остаются.</p>';
@@ -2022,7 +2080,7 @@ function seg(label,items,cur,fn){return'<div class="seg"><span class="sl">'+labe
 function subs(key,items){return'<div class="subs">'+items.map((x,i)=>'<button class="s'+((U.sub[key]||0)==i?' on':'')+'" onclick="U.sub.'+key+'='+i+';render()">'+x+'</button>').join('')+'</div>'}
 const setTab=i=>{U.tab=i;U.cr=0;U.cz=0;render()};
 const setLoad=i=>{S.load=i;save();render()},setMode=i=>{S.mode=i;save();render()},setFc=i=>{S.fc=i;save();render()};
-const setQ=i=>{S.q=i;save();render()},setLv=i=>{META.set.lv=i;saveMeta();render()},setEv=i=>{META.set.ev=i;saveMeta();render()},setTh=i=>{META.set.th=['','light','dark'][i];saveMeta();applyTheme();render()};
+const setLv=i=>{META.set.lv=i;saveMeta();render()},setEv=i=>{META.set.ev=i;saveMeta();render()},setTh=i=>{META.set.th=['','light','dark'][i];saveMeta();applyTheme();render()};
 /* ===== menu & new career ===== */
 function slotBtns(i,d){return d.done?'<button onclick="openSlot('+i+')">📋 Досье</button>':'<button onclick="openSlot('+i+')">▶ Продолжить</button>'}
 function vMenu(){
@@ -2039,33 +2097,28 @@ function vMenu(){
  h+='<p class="mu legal">Неофициальный фанатский симулятор. Имена футболистов и названия клубов использованы в информационных целях и принадлежат их владельцам. Матчи, цены и статистика в игре вымышленные.</p>';
  return h}
 function newSlot(i){SLOT=i;S=null;U.scr='new';render()}
-function openSlot(i){const d=lsGet(KEY(i));if(!d)return;S=d;SLOT=i;if(!S.mem)initMem();U.scr='game';U.tab=0;U.del=0;render()}
+function openSlot(i){const d=lsGet(KEY(i));if(!d)return;S=d;SLOT=i;fixMem();U.scr='game';U.tab=0;U.del=0;render()}
 function delSlot(i){if(U.del!=i){U.del=i;return render()}U.del=0;try{LS.del(KEY(i))}catch(e){}render()}
 function vNew(){
  const o=(a,sel)=>a.map(x=>'<option'+(x==sel?' selected':'')+'>'+x+'</option>').join('');
  return'<h1 class="ttl">Новая карьера · слот '+SLOT+'</h1><div class="c form">'
  +'<label for="nm">Имя игрока</label><input id="nm" maxlength="20" placeholder="Ваше имя" autocomplete="off">'
- +'<label for="qm">Режим игры</label><select id="qm"><option value="0">🎮 Обычный: матчи, события, решения</option><option value="1">⚡ Быстрый: выбрал тактику один раз и играешь сезонами</option></select>'
  +'<label for="ps">Позиция</label><select id="ps">'+Object.keys(POS).map(k=>'<option value="'+k+'"'+(k=='НАП'?' selected':'')+'>'+k+' · '+POSN[k]+'</option>').join('')+'</select>'
- +'<label for="ct">Страна</label><select id="ct">'+o(CTR,'Россия')+'</select>'
- +'<label for="lg">Лига старта</label><select id="lg" onchange="onLg()">'+LG.map((x,i)=>'<option value="'+i+'">'+x+'</option>').join('')+'</select>'
- +'<label for="cb">Клуб</label><select id="cb"></select>'
+ +'<label for="ct-b">Страна</label>'+fsel('ct',CTR.map(n=>({v:n,h:cf(n)})),'Россия')
+ +'<label for="lg-b">Страна старта (3-я лига)</label>'+fsel('lg',LG.map((x,i)=>({v:i,h:esc(x)})),0)
  +'<label for="yr">Год начала</label><select id="yr">'+Array.from({length:37},(_,i)=>2026-i).map(y=>'<option>'+y+'</option>').join('')+'</select>'
- +'<label for="sc">Сценарий</label><select id="sc"><option value="0">⚽ Классика: 17 лет, слабый клуб</option><option value="1">🌟 Вундеркинд: высокий потолок</option><option value="2">💪 Тяжёлый путь: мало таланта и денег</option><option value="3">🧓 Ветеран: 30 лет, звезда</option></select>'
- +'<label for="tt">Особенность</label><select id="tt"><option value="">без особенности</option><option value="bomb">🎯 Бомбардир: больше голов</option><option value="tech">🎨 Техника: больше передач</option><option value="iron">🛡 Железное здоровье: меньше травм</option><option value="lead">🎖 Лидер: любимец тренера</option><option value="grow">🚀 Талант: быстрый рост</option></select>'
+ +'<p class="mu qh">🪜 Вы начинаете в 3-й лиге выбранной страны в случайном клубе. Играйте хорошо, и клубы из 2-й, а потом и высшей лиги заметят вас.</p>'
  +'<div class="row"><button onclick="startCareer()">Начать карьеру</button><button class="s" onclick="U.scr=\'menu\';render()">Назад</button></div></div>'}
-function onLg(){const l=+document.getElementById('lg').value,e=document.getElementById('cb');if(!e)return;
- const op=i=>'<option value="'+i+'">'+esc(CL[i].n)+' · '+TN[CL[i].t-1]+'</option>';e.innerHTML='<option value="-1">🎲 Случайный клуб</option>'+LC[l].slice().sort((a,b)=>CL[b].t-CL[a].t).map(op).join('')+(L2[l].length?'<optgroup label="2-й дивизион">'+L2[l].map(op).join('')+'</optgroup>':'')}
 function startCareer(){
  const v=id=>document.getElementById(id).value;
- newCareer({name:v('nm').trim(),pos:v('ps'),ct:v('ct'),lg:+v('lg'),cb:+v('cb'),y0:+v('yr'),sc:+v('sc'),tt:v('tt')});
- S.q=+v('qm')||0;S.num=R(2,30);U.scr='game';U.tab=0;save();render();scrTop()}
+ newCareer({name:v('nm').trim(),pos:v('ps'),ct:v('ct'),lg:+v('lg'),y0:+v('yr')});
+ S.num=R(2,30);U.scr='game';U.tab=0;save();render();scrTop()}
 /* ===== game screen ===== */
 function vHero(){const c=club();
- return'<div class="hero"><div class="av">'+avatar(c)+'<div class="ovr">'+S.ovr+'</div></div><div class="hi"><div class="nm">'+esc(S.name)+'</div><div class="cb">'+badge(c,22)+'<span>'+esc(c.n)+'</span><small>'+S.pos+(S.div?' · 2-й див.':'')+'</small></div><div class="chips"><i>'+S.role+'</i><i>📅 '+sLab(Yr())+'</i>'+(S.flags.cap?'<i>🎖 капитан</i>':S.nat==1?'<i>🌍 сборная</i>':'')+'</div></div></div>'}
+ return'<div class="hero"><div class="av">'+avatar(c)+'<div class="ovr">'+S.ovr+'</div></div><div class="hi"><div class="nm">'+flagSvg(S.ct)+esc(S.name)+'</div><div class="cb">'+badge(c,22)+'<span>'+esc(c.n)+'</span><small>'+S.pos+DVS[S.div]+'</small></div><div class="chips"><i>'+S.role+'</i><i>📅 '+sLab(Yr())+'</i>'+(S.flags.cap?'<i>🎖 капитан</i>':S.nat==1?'<i>🌍 сборная</i>':'')+'</div></div></div>'}
 function meter(l,v,t){return'<div class="meter"><span>'+l+'</span><div class="bar"><i style="width:'+Math.max(0,Math.min(100,v))+'%"></i></div><span>'+(t!=null?t:Math.round(v))+'</span></div>'}
 function vMini(){const c=club();
- return'<div class="mini"><div class="mi">'+badge(c,30)+'<div><b>'+esc(S.name)+' <em>'+S.ovr+'</em></b><small>'+esc(c.n)+' · '+S.age+' л. · ⚡'+Math.round(S.energy)+(S.inj?' · 🤕':'')+'</small></div></div>'+(S.q?'<button onclick="quickRun(1)" aria-label="Сезон">⏩ Сезон</button>':'<button onclick="step(1)" aria-label="Сыграть матч">▶ Матч</button><button class="s2" onclick="seasonGo()" aria-label="Сезон">⏩</button>')+'</div>'}
+ return'<div class="mini"><div class="mi">'+badge(c,30)+'<div><b>'+esc(S.name)+' <em>'+S.ovr+'</em></b><small>'+esc(c.n)+' · '+S.age+' л. · ⚡'+Math.round(S.energy)+(S.inj?' · 🤕':'')+'</small></div></div>'+'<button onclick="step()" aria-label="Сыграть матч">▶ Матч</button></div>'}
 function vStats(){const ss=S.ss;
  return'<div class="g stat"><div><b>'+S.age+'</b><span>лет</span></div><div><b>'+f1(S.form)+'</b><span>форма</span></div><div><b>'+ss.g+'</b><span>голы</span></div><div><b>'+ss.a+'</b><span>передачи</span></div></div>'
  +meter('⚡ Энергия',S.energy).replace('class="meter"','class="meter en"')
@@ -2075,22 +2128,21 @@ function vNext(){const n=nextInfo();if(!n)return'';const c=club(),Y=Yr();
  const o=CL[n.o],d=pw(c,Y)+(n.h?3:-2)-pw(o,Y),w=Math.round(100/(1+Math.exp(-d/9))),L=n.h?c:o,Q=n.h?o:c;
  return'<div class="nx"><div class="nxt">'+(n.comp=='L'?'⚽':'🏆')+' '+esc(n.cn)+' · '+esc(n.lab)+'</div><div class="vs">'+badge(L,46)+'<div class="vm"><b>'+esc(L.n)+'</b><span class="vsx">против</span><b>'+esc(Q.n)+'</b><div class="mu">'+(n.h?'дома':'в гостях')+' · шанс победы ~'+w+'%</div></div>'+badge(Q,46)+'</div></div>'}
 function vCtl(){
- if(S.q)return'<div class="c tp">'+seg('Нагрузка',['😌 Лёгкая','💪 Средняя','🔥 Тяжёлая'],S.load,'setLoad')+seg('Стиль игры',['🛡 Осторожно','⚖ Обычно','⚔ Риск'],S.mode,'setMode')+seg('Фокус',['⚖ Баланс','🎯 Забивать','🅰️ Создавать'],S.fc,'setFc')+'</div><div class="ctl"><div class="go q"><button onclick="quickRun(1)">⏩ Сезон</button><button class="s2" onclick="quickRun(5)">⏭ 5 сезонов</button></div><p class="mu qh">⚡ Быстрый режим: матчи, события и тренировки идут сами. Остановлюсь, если придёт предложение от более сильного клуба.</p></div>'
  const sm=['Лёгкая','Средняя','Тяжёлая'][S.load]+' · '+['Осторожно','Обычно','Риск'][S.mode]+' · '+['Баланс','Голы','Передачи'][S.fc];
- const ex=(S.win&&!S.wd?'<button class="s" onclick="openWin()">💱 Зимнее окно</button>':'')+(S.md<4&&!S.goal?'<button class="s" onclick="goalCard()">🎯 Цель на сезон</button>':'')+(S.goal?'<span class="gl">🎯 Цель: '+({g:'результативность',r:'рейтинг 7.2+',t:'топ-3'})[S.goal]+'</span>':'');
- return'<div class="ctl"><div class="go"><button onclick="step(1)">▶ Матч</button><button class="s2" onclick="seasonGo()">⏩ Сезон</button></div>'
+ const ex=S.win&&!S.wd?'<button class="s" onclick="openWin()">💱 Зимнее окно</button>':'';
+ return'<div class="ctl"><div class="go one"><button onclick="step()">▶ Матч</button></div>'
  +'<button class="tact" onclick="U.tact=!U.tact;render()" aria-expanded="'+(!!U.tact)+'"><span>⚙ Тактика</span><small>'+sm+'</small><i>'+(U.tact?'▴':'▾')+'</i></button>'
- +(U.tact?'<div class="c tp">'+seg('Нагрузка',['😌 Лёгкая','💪 Средняя','🔥 Тяжёлая'],S.load,'setLoad')+seg('Стиль игры',['🛡 Осторожно','⚖ Обычно','⚔ Риск'],S.mode,'setMode')+seg('Фокус',['⚖ Баланс','🎯 Забивать','🅰️ Создавать'],S.fc,'setFc')+'<button class="s ob" onclick="step(5)">▶▶ Сыграть сразу 5 матчей</button></div>':'')
+ +(U.tact?'<div class="c tp">'+seg('Нагрузка',['😌 Лёгкая','💪 Средняя','🔥 Тяжёлая'],S.load,'setLoad')+seg('Стиль игры',['🛡 Осторожно','⚖ Обычно','⚔ Риск'],S.mode,'setMode')+seg('Фокус',['⚖ Баланс','🎯 Забивать','🅰️ Создавать'],S.fc,'setFc')+'</div>':'')
  +(ex?'<div class="row sm">'+ex+'</div>':'')+'</div>'}
-function goalCard(){S.dec={title:'🎯 Цель на сезон',text:'За выполнение: бонус и слава. За провал: недовольство тренера',o:[{t:'⚽ Результативность (голы, передачи)',a:'gl',v:'g'},{t:'⭐ Средний рейтинг 7.2 и выше',a:'gl',v:'r'},{t:'🏆 Топ-3 в лиге',a:'gl',v:'t'},{t:'Без цели',a:'stay'}]};render()}
 function vDec(){const d=S.dec;return'<div class="c dec"><h2>'+d.title+'</h2>'+(d.text?'<p class="dtx">'+d.text+'</p>':'')+d.o.map((o,i)=>'<button class="ob '+(o.a=='retire'?'r':'s')+'" onclick="act('+i+')">'+o.t+'</button>').join('')+'</div>'}
+const DVS=['',' · 2-й див.',' · 3-я лига'];
 const TABS=[['⚽','Матчи'],['📋','Лига'],['🧬','Игрок'],['👥','Клуб'],['⚙️','Ещё']];
 function vTabs(){return'<nav class="tabs">'+TABS.map((t,i)=>'<button class="'+(U.tab==i?'on':'')+'" onclick="setTab('+i+')"><span>'+t[0]+'</span><small>'+t[1]+'</small></button>').join('')+'</nav>'}
 function vGame(){
  if(!S.cal){S.cal=[];}
  if(S.phase=='win'&&!S.dec&&!S.done){S.phase=null;newSeason();save()}
  const T=[tMatches,tLeague,tPlayer,tClubTab,tMore];
- let h=(U.tab==0?vHero()+vStats()+(S.q?'':vNext())+vCtl():vMini())+(T[U.tab]||T[0])()+vTabs();
+ let h=(U.tab==0?vHero()+vStats()+vNext()+vCtl():vMini())+(T[U.tab]||T[0])()+vTabs();
  if(S.dec)h+='<div class="sheet"><div class="sheet-in">'+vDec()+'</div></div>';
  return h}
 /* ===== tabs ===== */
@@ -2106,12 +2158,15 @@ function mrow(x,ix){
  return'<div class="mr '+res+'"><div class="mtag">'+tag+(x.tl&&ix!=null?'<button class="rp" onclick="replay('+ix+')" aria-label="Повтор матча">📺 Повтор</button>':'')+'</div><div class="mt">'+badge(L,26)+'<b class="sc">'+sc+'</b>'+badge(Q,26)+'<span class="nmx">'+(x.h?'дома':'в гостях')+' · '+esc(B.n)+(x.et?' · доп. время':'')+(x.pk?' · пен. '+(x.h?x.ps[0]+':'+x.ps[1]:x.ps[1]+':'+x.ps[0]):'')+'</span></div>'+det+'</div>'}
 function tMatches(){const ss=S.ss,g=POS[S.pos]=='G';
  return'<div class="c"><div class="mu sline">Сезон: '+ss.apps+' матчей · '+ss.g+' гол. · '+ss.a+' перед.'+(g?' · '+ss.sv+' сейвов · '+ss.cs+' «сухих»':'')+(ss.apps?' · ср. оценка '+(ss.rt/ss.apps).toFixed(2):'')+'</div></div><div class="lg">'+(S.log.map(mrow).join('')||'<div class="c mu">Нажмите «Матч», чтобы начать сезон</div>')+'</div>'}
-function tLeague(){const c=club(),k=U.sub.l||0;let h=subs('l',['📋 Таблица','🏆 '+S.cup.n.replace('Открытый кубок США','Кубок США'),'🌍 '+(S.eu?S.eu.n.replace('Лига чемпионов','ЛЧ'):'Континент')]);
+/* лестница: где вы на пути к высшей лиге */
+function ladder(){const nm=['Высшая лига','2-я лига','3-я лига'];
+ return'<div class="c ladder" title="Путь наверх: 3-я лига, 2-я лига, высшая лига"><span aria-hidden="true">🪜</span>'+[2,1,0].map(d=>'<i class="'+(S.div==d?'on':S.div<d?'ok':'')+'">'+nm[d]+'</i>').join('<b>›</b>')+'</div>'}
+function tLeague(){const c=club(),k=U.sub.l||0;let h=ladder()+subs('l',['📋 Таблица','🏆 '+S.cup.n.replace('Открытый кубок США','Кубок США'),'🌍 '+(S.eu?S.eu.n.replace('Лига чемпионов','ЛЧ'):'Континент')]);
  if(k==0){const st=standings(),n=st.length,rk=relK(c.l),q=S.div?rk:QS[c.l];
-  h+='<div class="c"><h2>'+LG[c.l]+(S.div?' · 2-й дивизион':'')+' · '+sLab(Yr())+'</h2><div class="tw"><table class="tb"><tr><th>#</th><th>Клуб</th><th>И</th><th>В</th><th>Н</th><th>П</th><th>РМ</th><th>О</th></tr>'
-  +st.map((i,j)=>{const x=S.tb[i],cc=CL[i];return'<tr class="'+(i==S.ci?'me ':'')+(j<q?'z1':!S.div&&rk&&j>=n-rk?'z3':'')+'"><td>'+(j+1)+'</td><td><span class="tcl">'+badge(cc,18)+esc(cc.n)+'</span></td><td>'+(x.w+x.d+x.l)+'</td><td>'+x.w+'</td><td>'+x.d+'</td><td>'+x.l+'</td><td>'+(x.gf-x.ga>0?'+':'')+(x.gf-x.ga)+'</td><td><b>'+x.p+'</b></td></tr>'}).join('')+'</table></div><p class="mu leg"><i class="zk z1"></i> '+(S.div?'зона повышения в высший дивизион':'путёвка в континентальный турнир')+(!S.div&&rk?' · <i class="zk z3"></i> зона вылета':'')+'</p></div>'}
+  h+='<div class="c"><h2>'+LG[c.l]+['',' · 2-й дивизион',' · 3-й дивизион'][S.div]+' · '+sLab(Yr())+'</h2><div class="tw"><table class="tb"><tr><th>#</th><th>Клуб</th><th>И</th><th>В</th><th>Н</th><th>П</th><th>РМ</th><th>О</th></tr>'
+  +st.map((i,j)=>{const x=S.tb[i],cc=CL[i];return'<tr class="'+(i==S.ci?'me ':'')+(j<q?'z1':S.div<2&&rk&&j>=n-rk?'z3':'')+'"><td>'+(j+1)+'</td><td><span class="tcl">'+badge(cc,18)+esc(cc.n)+'</span></td><td>'+(x.w+x.d+x.l)+'</td><td>'+x.w+'</td><td>'+x.d+'</td><td>'+x.l+'</td><td>'+(x.gf-x.ga>0?'+':'')+(x.gf-x.ga)+'</td><td><b>'+x.p+'</b></td></tr>'}).join('')+'</table></div><p class="mu leg"><i class="zk z1"></i> '+(S.div?'зона повышения':'путёвка в континентальный турнир')+(S.div<2&&rk?' · <i class="zk z3"></i> зона вылета':'')+'</p></div>'}
  else{const T=k==1?S.cup:S.eu;
-  if(!T){const ct=contOf(c,Yr());h+='<div class="c"><h2>🌍 '+(ct?ct.n:'Континентальный турнир')+'</h2><p class="mu">'+(ct?(S.div?'Международные турниры доступны клубам высшего дивизиона.':'В этом сезоне ваш клуб не участвует. Нужно закончить сезон не ниже '+QS[c.l]+'-го места в лиге.'):'Для вашей лиги в этом сезоне нет международных турниров.')+'</p></div>'}
+  if(!T){const ct=contOf(c,Yr());h+='<div class="c"><h2>🌍 '+(ct?ct.n:'Континентальный турнир')+'</h2><p class="mu">'+(ct?(S.div?'Международные турниры доступны клубам высшего дивизиона. Поднимитесь выше!':'В этом сезоне ваш клуб не участвует. Нужно закончить сезон не ниже '+QS[c.l]+'-го места в лиге.'):'Для вашей лиги в этом сезоне нет международных турниров.')+'</p></div>'}
   else{const inn=T.alive.indexOf(S.ci)>=0;
    h+='<div class="c"><h2>'+(k==1?'🏆':'🌍')+' '+esc(T.n)+'</h2><p class="'+(T.done&&T.win==S.ci?'good':'mu')+'">'+(T.done?(T.win==S.ci?'🏆 Вы победили!':'Победитель: '+esc(CL[T.win].n)):inn?'Вы в игре · осталось клубов: '+T.alive.length:'Вы выбыли · осталось клубов: '+T.alive.length)+'</p>'
    +(T.res.length?'<div class="kor">'+T.res.map(x=>'<div class="tr">'+esc(x)+'</div>').join('')+'</div>':'<p class="mu">Первый матч ещё впереди.</p>')
@@ -2125,7 +2180,7 @@ function tSkills(){const lab=POS[S.pos]=='G'?AN.gk:AN.out,cap=attrCap(),ss=S.ss;
  h+='<div class="c"><h2>Сезон</h2><div class="g g4"><div><b>'+ss.apps+'</b><span>матчей</span></div><div><b>'+(ss.apps?(ss.rt/ss.apps).toFixed(1):'–')+'</b><span>оценка</span></div><div><b>'+ss.yc+'</b><span>🟨</span></div><div><b>'+ss.rc+'</b><span>🟥</span></div></div></div>';
  return h}
 function tState(){const n=S.cal.length,pt=n?S.ptr/n*100:100;
- return'<div class="c"><h2>Состояние</h2>'+meter('🤝 Тренер',S.cr)+meter('🗓 Сезон',pt,Math.min(S.ptr,n)+'/'+n)+'<div class="chips2"><span>🏷 цена '+fm(val())+' млн</span><span>📝 контракт '+S.contract+' г.</span><span>💼 '+fm(S.wage)+' млн/год</span><span>🌍 '+esc(S.ct)+'</span><span>🏟 '+esc(LG[club().l])+(S.div?' · 2-й див.':'')+'</span>'+(S.tt?'<span>'+TT[S.tt]+'</span>':'')+'</div></div>'}
+ return'<div class="c"><h2>Состояние</h2>'+meter('🤝 Тренер',S.cr)+meter('🗓 Сезон',pt,Math.min(S.ptr,n)+'/'+n)+'<div class="chips2"><span>🏷 цена '+fm(val())+' млн</span><span>📝 контракт '+S.contract+' г.</span><span>💼 '+fm(S.wage)+' млн/год</span><span>'+cf(S.ct)+'</span><span>🏟 '+esc(LG[club().l])+DVS[S.div]+'</span></div></div>'}
 function tPlayer(){const k=U.sub.p||0;return subs('p',['🧬 Навыки','📊 Сезоны','🏆 Награды','🌍 Сборная'])+(k==0?tState()+tSkills():tCareer(k-1))}
 function tClubTab(){const k=U.sub.k||0;return subs('k',['👥 Состав','💶 Деньги','👔 Менеджер'])+(k==0?tClub():tMoney(k-1))}
 function squad(ci){const i0=ci==null?S.ci:ci,c=CL[i0],Y=Yr();let s=(i0+1)*7919+Y*131,r=()=>{s=(s*16807)%2147483647;return s/2147483647};
@@ -2135,7 +2190,7 @@ function squad(ci){const i0=ci==null?S.ci:ci,c=CL[i0],Y=Yr();let s=(i0+1)*7919+Y
  if(i0==S.ci)a.push({n:S.name,p:S.pos,o:S.ovr,me:1});a.sort((x,y)=>y.o-x.o);return a}
 function tClub(){const c=club(),Y=Yr(),q=squad(),st=standings(),rk=st.indexOf(S.ci)+1;
  const last=S.log.filter(x=>typeof x=='object'&&x.comp=='L').slice(0,6).map(x=>{const w=x.gf>x.ga?'w':x.gf<x.ga?'l':'d';return'<i class="fm '+w+'">'+({w:'В',d:'Н',l:'П'})[w]+'</i>'}).join('');
- return'<div class="c"><div class="clh">'+badge(c,54)+'<div><h2>'+esc(c.n)+'</h2><div class="mu">'+LG[c.l]+' · '+TN[c.t-1]+' · сила '+pw(c,Y)+'</div></div></div><div class="g g3"><div><b>'+rk+'</b><span>место в лиге</span></div><div><b>'+S.role+'</b><span>ваша роль</span></div><div><b>'+Math.round(S.cr)+'</b><span>🤝 тренер</span></div></div>'+(last?'<div class="fmr"><span class="mu">Форма клуба</span>'+last+'</div>':'')+'</div>'
+ return'<div class="c"><div class="clh">'+badge(c,54)+'<div><h2>'+esc(c.n)+'</h2><div class="mu">'+LG[c.l]+' · '+tlab(S.ci)+' · сила '+pw(c,Y)+'</div></div></div><div class="g g3"><div><b>'+rk+'</b><span>место в лиге</span></div><div><b>'+S.role+'</b><span>ваша роль</span></div><div><b>'+Math.round(S.cr)+'</b><span>🤝 тренер</span></div></div>'+(last?'<div class="fmr"><span class="mu">Форма клуба</span>'+last+'</div>':'')+'</div>'
  +'<div class="c"><h2>👥 Состав</h2><div class="tw"><table class="tb">'+q.map((p,i)=>'<tr'+(p.me?' class="me"':'')+'><td>'+(i<11?'🟢':'⚪')+'</td><td'+(p.real?' class="real"':' class="fake"')+'>'+esc(p.n)+(p.me?' ⭐':'')+'</td><td>'+p.p+'</td><td><b>'+p.o+'</b></td></tr>').join('')+'</table></div><p class="mu leg">🟢 основа · яркие фамилии — реальные игроки той эпохи, остальные вымышленные · ваше место: '+(q.findIndex(p=>p.me)+1)+'</p></div>'}
 function chart(){const h=S.hist;if(h.length<2)return'<p class="mu">График появится после двух сезонов.</p>';
  const W=340,H=140,p=26,n=h.length,xs=h.map((_,i)=>p+i*(W-2*p)/Math.max(1,n-1)),lo=Math.min(...h.map(x=>x.ovr))-3,hi=Math.max(...h.map(x=>x.ovr))+3,y=v=>H-p-(v-lo)/(hi-lo)*(H-2*p),gm=Math.max(5,...h.map(x=>x.g)),bw=Math.max(4,Math.min(18,(W-2*p)/n-4));
@@ -2147,7 +2202,7 @@ function chart(){const h=S.hist;if(h.length<2)return'<p class="mu">График 
 function tCareer(k){const t=S.tot;let h='';
  if(k==0)h+='<div class="c"><h2>Рейтинг и голы</h2>'+chart()+'</div><div class="c"><div class="g g4"><div><b>'+(t.apps+S.ss.apps)+'</b><span>матчей</span></div><div><b>'+(t.g+S.ss.g)+'</b><span>голов</span></div><div><b>'+(t.a+S.ss.a)+'</b><span>передач</span></div><div><b>'+S.hist.length+'</b><span>сезонов</span></div></div></div><div class="c"><div class="tw"><table class="tb"><tr><th>Год</th><th>Клуб</th><th>М</th><th>Г</th><th>П</th><th>Оц</th><th>Мест</th></tr>'+(S.hist.map(x=>'<tr><td>'+x.yr+'</td><td>'+esc(x.club)+'</td><td>'+x.apps+'</td><td>'+x.g+'</td><td>'+x.a+'</td><td>'+x.rt+'</td><td>'+x.rank+'</td></tr>').join('')||'<tr><td colspan="7" class="mu">Пока пусто</td></tr>')+'</table></div></div>';
  else if(k==1)h+='<div class="c"><h2>🏆 Трофеи · '+S.tr.length+'</h2>'+(S.tr.map(x=>'<div class="tr">🏆 '+esc(x)+'</div>').join('')||'<p class="mu">Пока нет</p>')+'<h2 class="gap">🏅 Награды · '+S.aw.length+'</h2>'+(S.aw.map(x=>'<div class="tr">🏅 '+esc(x)+'</div>').join('')||'<p class="mu">Пока нет</p>')+'</div>';
- else h+='<div class="c"><h2>🌍 '+esc(S.ct)+'</h2><div class="g g3"><div><b>'+t.caps+'</b><span>матчей</span></div><div><b>'+t.cg+'</b><span>голов</span></div><div><b>'+(S.nat==1?'да':'нет')+'</b><span>в сборной</span></div></div>'+(S.nt.length?S.nt.map(x=>'<div class="tr"><b>'+esc(x.nm)+' '+x.y+'</b>: '+esc(x.res)+' · '+x.g+' гол., '+x.a+' перед.</div>').join(''):'<p class="mu">Вызов в сборную приходит после сильных сезонов. Чем сильнее страна, тем выше нужен рейтинг (сила сборной: '+(NAT[S.ct]||60)+'). Турниры идут каждые два года: чемпионат мира и континентальный кубок.</p>')+'</div>';
+ else h+='<div class="c"><h2>'+cf(S.ct)+'</h2><div class="g g3"><div><b>'+t.caps+'</b><span>матчей</span></div><div><b>'+t.cg+'</b><span>голов</span></div><div><b>'+(S.nat==1?'да':'нет')+'</b><span>в сборной</span></div></div>'+(S.nt.length?S.nt.map(x=>'<div class="tr"><b>'+esc(x.nm)+' '+x.y+'</b>: '+esc(x.res)+' · '+x.g+' гол., '+x.a+' перед.</div>').join(''):'<p class="mu">Вызов в сборную приходит после сильных сезонов. Чем сильнее страна, тем выше нужен рейтинг (сила сборной: '+(NAT[S.ct]||60)+'). Турниры идут каждые два года: чемпионат мира и континентальный кубок.</p>')+'</div>';
  return h}
 const PRICES={pt:[.5,'🏋 Личный тренер','+3 очка тренировок и рост выше в этом сезоне'],dt:[.3,'🥗 Диетолог','травм вдвое меньше в этом сезоне'],fm:[.4,'📣 Личный бренд','+1 к известности'],ch:[.2,'🤲 Благотворительность','+1 к известности, лучше форма'],house:[3,'🏠 Особняк','+2 к известности (один раз)'],car:[1.5,'🚗 Автопарк','+1 к известности (один раз)'],yacht:[15,'🛥 Яхта','+3 к известности (один раз)']};
 function buy(k){const c=pc(PRICES[k][0]);if(S.cash<c){S.msg='💶 Не хватает денег';return render()}
@@ -2183,19 +2238,19 @@ function sh(t){const x=t+(GURL?'\n'+GURL:''),box=()=>{const d=document.createEle
  (navigator.share?navigator.share({text:x}):Promise.reject()).catch(()=>{try{navigator.clipboard.writeText(x).then(()=>toast('Текст скопирован'),box)}catch(e){box()}})}
 const dossTxt=()=>{const t=S.tot;return'⚽ '+S.name+': '+t.apps+' матчей, '+t.g+' голов, '+S.tr.length+' трофеев, '+S.aw.length+' наград. Сыграй и ты!'};
 function tMore(){
- return'<div class="c"><h2>⚙️ Настройки</h2>'+seg('Режим игры',['🎮 Обычный','⚡ Быстрый'],S.q?1:0,'setQ')+seg('События',['Выкл','Редко','Нормально','Часто'],META.set.ev,'setEv')+seg('Показ матча',['Нет','Да'],META.set.lv===0?0:1,'setLv')+seg('Тема',['Авто','Светлая','Тёмная'],META.set.th=='light'?1:META.set.th=='dark'?2:0,'setTh')+'</div>'
+ return'<div class="c"><h2>⚙️ Настройки</h2>'+seg('События',['Выкл','Редко','Нормально','Часто'],META.set.ev,'setEv')+seg('Показ матча',['Нет','Да'],META.set.lv===0?0:1,'setLv')+seg('Тема',['Авто','Светлая','Тёмная'],META.set.th=='light'?1:META.set.th=='dark'?2:0,'setTh')+'</div>'
  +'<div class="c"><h2>🏅 Достижения · '+Object.keys(META.ach).length+'/'+ACH.length+'</h2><div class="achs">'+ACH.map(a=>'<div class="ach'+(META.ach[a.id]?' got':'')+'"><b>'+esc(a.n)+'</b><span>'+esc(a.d)+'</span></div>').join('')+'</div></div>'
  +'<div class="c"><div class="row"><button onclick="showCard()">🖼 Карточка для Discord</button><button class="s" onclick="sh(dossTxt())">📤 Текстом</button></div><div class="row"><button class="s" onclick="toMenu()">🏠 В меню</button></div><div class="row"><button class="'+(U.cr?'r':'s')+'" onclick="retire()">'+(U.cr?'⚠ Нажмите ещё раз':'Завершить карьеру')+'</button></div></div>'}
 function toMenu(){save();S=null;U.scr='menu';U.tab=0;render();scrTop()}
 function vDoss(){const t=S.tot,sc=score(),best=Math.max(S.ovr,...S.hist.map(x=>x.ovr));
- return vHero()+'<div class="c"><h2>🏆 '+titleOf(sc)+'</h2><div class="mu">'+S.pos+' · '+esc(S.ct)+' · сезонов: '+S.hist.length+' · пик рейтинга '+best+' · очки карьеры '+sc+'</div><div class="g g4 gap"><div><b>'+t.apps+'</b><span>матчей</span></div><div><b>'+t.g+'</b><span>голов</span></div><div><b>'+t.a+'</b><span>передач</span></div><div><b>'+t.caps+'</b><span>за сборную</span></div></div></div>'
+ return vHero()+'<div class="c"><h2>🏆 '+titleOf(sc)+'</h2><div class="mu">'+S.pos+' · '+cf(S.ct)+' · сезонов: '+S.hist.length+' · пик рейтинга '+best+' · очки карьеры '+sc+'</div><div class="g g4 gap"><div><b>'+t.apps+'</b><span>матчей</span></div><div><b>'+t.g+'</b><span>голов</span></div><div><b>'+t.a+'</b><span>передач</span></div><div><b>'+t.caps+'</b><span>за сборную</span></div></div></div>'
  +'<div class="c"><h2>Рейтинг и голы</h2>'+chart()+'</div>'
  +'<div class="c"><div class="tw"><table class="tb"><tr><th>Год</th><th>Клуб</th><th>М</th><th>Г</th><th>П</th><th>Мест</th></tr>'+S.hist.map(x=>'<tr><td>'+x.yr+'</td><td>'+esc(x.club)+'</td><td>'+x.apps+'</td><td>'+x.g+'</td><td>'+x.a+'</td><td>'+x.rank+'</td></tr>').join('')+'</table></div></div>'
  +'<div class="c"><h2>Трофеи и награды</h2>'+([...S.tr.map(x=>'🏆 '+x),...S.aw.map(x=>'🏅 '+x)].map(x=>'<div class="tr">'+esc(x)+'</div>').join('')||'<p class="mu">Без наград</p>')+'</div>'
  +'<div class="c"><div class="row"><button onclick="showCard()">🖼 Карточка для Discord</button><button class="s" onclick="sh(dossTxt())">📤 Текстом</button></div><div class="row"><button class="s" onclick="toMenu()">🏠 В меню</button></div></div>'}
 function render(){
  const a=document.getElementById('app');if(!a)return;
- try{a.innerHTML=U.scr=='menu'?vMenu():U.scr=='new'?vNew():U.scr=='mg'?vMg():U.scr=='mgnew'?vMgNew():(S&&S.done)?vDoss():vGame();if(U.scr=='new')onLg()}
+ try{a.innerHTML=U.scr=='menu'?vMenu():U.scr=='new'?vNew():U.scr=='mg'?vMg():U.scr=='mgnew'?vMgNew():(S&&S.done)?vDoss():vGame();}
  catch(e){console.error(e);a.innerHTML='<div class="c"><h2>⚠ Ошибка</h2><p class="mu">'+esc(e.message)+'</p><div class="row"><button onclick="toMenu()">В меню</button></div></div>'}
  if(window.ysSync)ysSync()}
 
@@ -2203,7 +2258,7 @@ function render(){
 let MT=null;
 function closeMatch(){if(MT){clearTimeout(MT.t);MT=null}const o=document.getElementById('mov');if(o)o.remove()}
 function replay(i){const E=S&&S.log[i];if(E&&typeof E=='object'&&E.tl)openMatch(E,false)}
-function liveOpen(b0){if(!S||S.q||META.set.lv===0)return;const E=S.log.find(x=>typeof x=='object');if(E&&E!==b0&&E.tl)openMatch(E,true)}
+function liveOpen(b0){if(!S||META.set.lv===0)return;const E=S.log.find(x=>typeof x=='object');if(E&&E!==b0&&E.tl)openMatch(E,true)}
 function openMatch(E,live){
  closeMatch();
  const mine=CL[E.my!=null?E.my:S.ci],B=CL[E.o],L=E.h?mine:B,Q=E.h?B:mine,T=E.et?120:90,ev=E.tl;
@@ -2272,6 +2327,97 @@ async function cardShare(){try{const b=await cardBlob(),f=new File([b],'kariera.
 async function cardCopy(){try{const b=await cardBlob();await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);toast('Картинка скопирована, вставьте её в чат')}catch(e){toast('Не вышло. Нажмите на картинку и удерживайте')}}
 async function cardSave(){try{const b=await cardBlob(),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kariera.png';document.body.appendChild(a);a.click();a.remove();toast('Если файл не скачался, удерживайте картинку')}catch(e){toast('Нажмите на картинку и удерживайте')}}
 applyTheme();render();
+
+/* ===== флаги ===== */
+/* Эмодзи-флаги есть не везде: в Windows вместо них видны буквы (ES, DE…). Поэтому флаги нарисованы здесь в SVG,
+   а эмодзи-флаги в любом тексте страницы автоматически заменяются на них (flagify + MutationObserver). */
+const FLG=(()=>{
+ const R=(x,y,w,h,f)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+f+'"/>';
+ const H=(...c)=>c.map((f,i)=>R(0,+(i*20/c.length).toFixed(2),30,+(20/c.length+.05).toFixed(2),f)).join('');
+ const V=(...c)=>c.map((f,i)=>R(+(i*30/c.length).toFixed(2),0,+(30/c.length+.05).toFixed(2),20,f)).join('');
+ const C=(x,y,r,f)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"/>';
+ const ST=(cx,cy,r,a)=>{const p=[];for(let i=0;i<10;i++){const g=-Math.PI/2+i*Math.PI/5,q=i%2?r*.382:r;p.push((cx+q*Math.cos(g)).toFixed(2)+','+(cy+q*Math.sin(g)).toFixed(2))}return'<polygon points="'+p.join(' ')+'" '+a+'/>'};
+ const NC=(bg,cr,x,w)=>R(0,0,30,20,bg)+R(x,0,w,20,cr)+R(0,10-w/2,30,w,cr);                /* скандинавский крест */
+ const tri=(x,y,ang,pat)=>'<g transform="translate('+x+' '+y+') rotate('+ang+')" fill="#000">'+pat.split('').map((c,i)=>c=='s'?'<rect x="-2.4" y="'+(i*1.5-1.9)+'" width="4.8" height=".8"/>':'<rect x="-2.4" y="'+(i*1.5-1.9)+'" width="2" height=".8"/><rect x=".4" y="'+(i*1.5-1.9)+'" width="2" height=".8"/>').join('')+'</g>';
+ /* США: 13 полос и синий угол с точками */
+ const us=(()=>{let s='';for(let i=0;i<13;i++)s+=R(0,+(i*20/13).toFixed(2),30,1.6,i%2?'#fff':'#b22234');s+=R(0,0,13,10.8,'#3c3b6e');for(let r=0;r<4;r++)for(let c=0;c<5;c++)s+=C(1.7+c*2.4+(r%2?1.2:0),1.6+r*2.4,.55,'#fff');return s})();
+ /* Уругвай: 9 полос и белый угол с солнцем */
+ const uy=(()=>{let s='';for(let i=0;i<9;i++)s+=R(0,+(i*20/9).toFixed(2),30,2.3,i%2?'#0038a8':'#fff');return s+R(0,0,12,8.9,'#fff')+C(6,4.45,2.6,'#fcd116')+C(6,4.45,1.5,'#f6a800')})();
+ /* Хорватия: полосы и клетчатый герб */
+ const hr=(()=>{let s=H('#f00','#fff','#171796')+R(12.4,6.2,5.2,6.4,'#fff');for(let r=0;r<4;r++)for(let c=0;c<3;c++)if((r+c)%2==0)s+=R(12.6+c*1.6,6.4+r*1.5,1.6,1.5,'#e8112d');return s+'<rect x="12.4" y="6.2" width="5.2" height="6.4" fill="none" stroke="#c8102e" stroke-width=".5"/>'})();
+ const D={
+  'Россия':H('#fff','#0039a6','#d52b1e'),
+  'Бразилия':R(0,0,30,20,'#009c3b')+'<polygon points="15,2.2 27.4,10 15,17.8 2.6,10" fill="#ffdf00"/>'+C(15,10,4.3,'#002776')+'<path d="M10.8 9.3Q15 7.4 19.2 11" stroke="#fff" stroke-width=".9" fill="none"/>',
+  'Аргентина':H('#74acdf','#fff','#74acdf')+C(15,10,1.9,'#f6b40e'),
+  'Испания':R(0,0,30,20,'#aa151b')+R(0,5,30,10,'#f1bf00')+R(6,8,3,4,'#aa151b'),
+  'Англия':R(0,0,30,20,'#fff')+R(12.5,0,5,20,'#ce1124')+R(0,7.5,30,5,'#ce1124'),
+  'Германия':H('#000','#dd0000','#ffce00'),
+  'Франция':V('#0055a4','#fff','#ef4135'),
+  'Италия':V('#009246','#fff','#ce2b37'),
+  'Португалия':R(0,0,12,20,'#006600')+R(12,0,18,20,'#ff0000')+C(12,10,3.7,'#ffcc00')+C(12,10,2.5,'#fff')+C(12,10,1.4,'#d00'),
+  'Нидерланды':H('#ae1c28','#fff','#21468b'),
+  'Бельгия':V('#000','#fae042','#ed2939'),
+  'Хорватия':hr,
+  'Сербия':H('#c6363c','#0c4076','#fff')+R(6.3,4.4,5,8.2,'#c6363c')+R(7,5.1,3.6,6.8,'#eed9a5'),
+  'Польша':H('#fff','#dc143c'),
+  'Украина':H('#0057b7','#ffd700'),
+  'Турция':R(0,0,30,20,'#e30a17')+C(11,10,5,'#fff')+C(12.4,10,4,'#e30a17')+ST(16.4,10,2.7,'fill="#fff"'),
+  'Швеция':NC('#006aa7','#fecc00',8,4),
+  'Норвегия':R(0,0,30,20,'#ba0c2f')+R(7,0,6,20,'#fff')+R(0,7,30,6,'#fff')+R(8.5,0,3,20,'#00205b')+R(0,8.5,30,3,'#00205b'),
+  'Дания':NC('#c8102e','#fff',8,4),
+  'Швейцария':R(0,0,30,20,'#d52b1e')+R(13,4,4,12,'#fff')+R(9,8,12,4,'#fff'),
+  'Уругвай':uy,
+  'Колумбия':R(0,0,30,10,'#fcd116')+R(0,10,30,5,'#003893')+R(0,15,30,5,'#ce1126'),
+  'Мексика':V('#006847','#fff','#ce1126')+C(15,10,2.3,'#a67c37')+C(15,10,1.3,'#6b8e23'),
+  'США':us,
+  'Япония':R(0,0,30,20,'#fff')+C(15,10,6,'#bc002d'),
+  'Южная Корея':R(0,0,30,20,'#fff')+'<path d="M9.5 10a5.5 5.5 0 0 1 11 0z" fill="#cd2e3a"/><path d="M9.5 10a5.5 5.5 0 0 0 11 0z" fill="#0047a0"/><path d="M9.5 10a2.75 2.75 0 0 1 5.5 0z" fill="#0047a0"/><path d="M15 10a2.75 2.75 0 0 0 5.5 0z" fill="#cd2e3a"/>'+tri(5,4.6,29,'sss')+tri(25,15.4,29,'bbb')+tri(25,4.6,-29,'bsb')+tri(5,15.4,-29,'sbs'),
+  'Нигерия':V('#008751','#fff','#008751'),
+  'Сенегал':V('#00853f','#fdef42','#e31b23')+ST(15,10.2,3.4,'fill="#00853f"'),
+  'Марокко':R(0,0,30,20,'#c1272d')+ST(15,10.4,5.4,'fill="none" stroke="#006233" stroke-width="1" stroke-linejoin="miter"'),
+  'Египет':H('#ce1126','#fff','#000')+R(13.4,8.4,3.2,3.2,'#c09300'),
+  'Саудовская Аравия':R(0,0,30,20,'#006c35')+R(6,5,18,1.7,'#fff')+R(9,8,12,1.2,'#fff')+R(6.5,13.4,17,1.1,'#fff')+R(6.5,12.6,2.6,2.7,'#fff')
+ };
+ return D})();
+const FLG_ISO={AR:'Аргентина',BR:'Бразилия',DE:'Германия',ES:'Испания',FR:'Франция',IT:'Италия',NL:'Нидерланды',PT:'Португалия',RU:'Россия',SA:'Саудовская Аравия',TR:'Турция',US:'США',BE:'Бельгия',HR:'Хорватия',RS:'Сербия',PL:'Польша',UA:'Украина',SE:'Швеция',NO:'Норвегия',DK:'Дания',CH:'Швейцария',UY:'Уругвай',CO:'Колумбия',MX:'Мексика',JP:'Япония',KR:'Южная Корея',NG:'Нигерия',SN:'Сенегал',MA:'Марокко',EG:'Египет',GB:'Англия'};
+const flagSvg=n=>FLG[n]?'<svg class="flg" viewBox="0 0 30 20" preserveAspectRatio="none" role="img" aria-label="'+n+'" focusable="false">'+FLG[n]+'</svg>':'';
+const cf=n=>FLG[n]?flagSvg(n)+esc(n):'🌍 '+esc(n);                                  /* флаг + название страны */
+/* эмодзи-флаги и чёрный флаг (Англия) в любом тексте -> SVG */
+const FLG_RE=/[\u{1F1E6}-\u{1F1FF}]{2}|\u{1F3F4}[\u{E0020}-\u{E007F}]*/gu;
+function flagify(root){
+ if(!root||!root.nodeType)return;
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),list=[];
+ for(let n=w.nextNode();n;n=w.nextNode()){const v=n.nodeValue;if(v&&/[\u{1F1E6}-\u{1F3F4}]/u.test(v)){FLG_RE.lastIndex=0;if(FLG_RE.test(v))list.push(n)}}
+ list.forEach(n=>{
+  const par=n.parentNode;if(!par||/^(OPTION|TEXTAREA|SCRIPT|STYLE|TITLE)$/.test(par.nodeName))return;
+  const t=n.nodeValue,fr=document.createDocumentFragment();let last=0,hit=0;
+  FLG_RE.lastIndex=0;
+  t.replace(FLG_RE,(m,i)=>{
+   const nm=m.codePointAt(0)==0x1F3F4?'Англия':FLG_ISO[String.fromCharCode(m.codePointAt(0)-0x1F1E6+65,m.codePointAt(2)-0x1F1E6+65)];
+   if(nm&&FLG[nm]){fr.append(t.slice(last,i));const tp=document.createElement('template');tp.innerHTML=flagSvg(nm);fr.append(tp.content);last=i+m.length;hit=1}
+   return m});
+  if(!hit)return;
+  fr.append(t.slice(last));par.replaceChild(fr,n)})}
+try{
+ new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType==1)flagify(n);else if(n.nodeType==3&&n.parentNode&&n.parentNode.nodeType==1)flagify(n.parentNode)}))}).observe(document.body,{childList:true,subtree:true});
+ flagify(document.body);
+}catch(e){console.error(e)}
+/* ===== выпадающий список с флагами (обычный select флаги не показывает) ===== */
+/* items: [{v,h}] или заголовок группы {hdr}; h — готовый HTML. cb — имя глобальной функции, получит выбранное значение. Значение лежит в <input id> */
+function fsel(id,items,sel,cb){
+ const opts=items.filter(x=>x.hdr==null),cur=opts.find(x=>String(x.v)==String(sel))||opts[0];
+ return'<div class="fs" id="fs-'+id+'"><input type="hidden" id="'+id+'" value="'+esc(cur.v)+'"'+(cb?' data-cb="'+cb+'"':'')+'>'
+ +'<button type="button" class="fs-b" id="'+id+'-b" aria-haspopup="listbox" aria-expanded="false" onclick="fsTog(\''+id+'\')"><span class="fs-t">'+cur.h+'</span><i aria-hidden="true"></i></button>'
+ +'<div class="fs-l" role="listbox" hidden>'+items.map(x=>x.hdr!=null?'<div class="fs-g">'+esc(x.hdr)+'</div>':'<button type="button" role="option" class="fs-o'+(x===cur?' on':'')+'" aria-selected="'+(x===cur)+'" data-v="'+esc(x.v)+'" onclick="fsPick(\''+id+'\',this)">'+x.h+'</button>').join('')+'</div></div>'}
+function fsClose(){document.querySelectorAll('.fs-l').forEach(l=>{l.hidden=true});document.querySelectorAll('.fs-b').forEach(b=>b.setAttribute('aria-expanded','false'))}
+function fsTog(id){const box=document.getElementById('fs-'+id);if(!box)return;const l=box.querySelector('.fs-l'),open=l.hidden;fsClose();
+ if(open){l.hidden=false;box.querySelector('.fs-b').setAttribute('aria-expanded','true');const on=l.querySelector('.on');if(on)l.scrollTop=Math.max(0,on.offsetTop-l.clientHeight/2+on.offsetHeight/2)}}
+function fsPick(id,o){const box=document.getElementById('fs-'+id),inp=document.getElementById(id);if(!box||!inp)return;
+ inp.value=o.getAttribute('data-v');box.querySelector('.fs-t').innerHTML=o.innerHTML;
+ box.querySelectorAll('.fs-o').forEach(x=>{const on=x===o;x.classList.toggle('on',on);x.setAttribute('aria-selected',on?'true':'false')});
+ fsClose();const cb=inp.getAttribute('data-cb');if(cb&&typeof window[cb]=='function')window[cb](inp.value);else box.querySelector('.fs-b').focus()}
+document.addEventListener('click',e=>{if(!(e.target&&e.target.closest&&e.target.closest('.fs')))fsClose()});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')fsClose()});
 
 </script>
 </body></html>
